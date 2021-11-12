@@ -1,30 +1,54 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div class="appBar">
+    <img :src="require('./assets/logo.png')" class="headerImg" alt="logo">
+    <div class="headerApp">
+      <div class="headerSmall">федеральное государственное бюджетное учреждение</div>
+      <div class="headerBig">«Консультативно-диагностический центр с поликлиникой»</div>
+      <div class="headerSmall">Управления делами Президента Российской Федерации</div>
+    </div>
   </div>
-  <router-view/>
 </template>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+
+*{
+  margin: 0;
+  padding: 0;
 }
 
-#nav {
-  padding: 30px;
+.body{
+  background-color: rgba(246, 252, 255, 1);
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.appBar{
+  width: 100%;
+  display: flex;
+  padding-left: 30px;
+  /*justify-content: space-between;*/
+  background-color: rgba(246, 252, 255, 1);
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+.headerApp{
+  padding-top: 5px;
+  padding-left: 10px;
+  margin-bottom: 1px;
 }
+
+.headerImg{
+  max-width: 60px;
+}
+
+.headerBig{
+  font-size: 18px;
+  line-height: 1.2;
+  margin-bottom: 4px;
+  color: #7d7d7d;
+  font-weight: 700;
+}
+
+.headerSmall{
+  font-size: 11px;
+  color: #4f8ab2;
+}
+
 </style>
