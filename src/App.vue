@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="appBar">
     <img :src="require('./assets/logo.png')" class="headerImg" alt="logo">
     <div class="headerApp">
@@ -7,6 +8,10 @@
       <div class="headerSmall">Управления делами Президента Российской Федерации</div>
     </div>
   </div>
+  <div class="main">
+   <router-view></router-view>
+  </div>
+  </div>
 </template>
 
 <style>
@@ -14,18 +19,22 @@
 *{
   margin: 0;
   padding: 0;
+  max-width: max-content;
 }
 
-.body{
-  background-color: rgba(246, 252, 255, 1);
+.main{
+  margin-right: auto;
+  margin-left: auto;
+  padding-top:80px;
 }
 
 .appBar{
   width: 100%;
+  padding-top: 10px;
   display: flex;
   padding-left: 30px;
-  /*justify-content: space-between;*/
   background-color: rgba(246, 252, 255, 1);
+  /*position: fixed;*/
 }
 
 .headerApp{
