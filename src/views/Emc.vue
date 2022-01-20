@@ -1,16 +1,18 @@
 <template>
+  <div>
   <div class="search-wrapper">
       <input type="text" v-model="search" placeholder="Введите название:"/>
         <label>Название документа:</label>
-    </div>
+  </div>
 <div class="cards">
-  <EmcCard :patient="documents[0].session.patient"></EmcCard>
+  <EmcCard :document="documents[0]"></EmcCard>
   <div class="doc_cards">
   <DocCard v-for="doc in searchDoc"
            :document="doc"
            :key="doc.id"/>
   </div>
 </div>
+  </div>
 </template>
 
 <script>
@@ -26,7 +28,7 @@ export default {
   data () {
     return {
       documents: [],
-      patient: null,
+      document: null,
       search: ''
     }
   },
@@ -41,7 +43,7 @@ export default {
           }
         )
         this.documents = response.data
-        this.patient = document[0].session.patient
+        this.document = this.documents[0]
       } catch (e) {
         console.log(e)
       }
@@ -100,12 +102,12 @@ input:focus + label {
       }
 .cards{
   display: flex;
-  justify-content: space-between;
+  /*justify-content: center;*/
 }
 .doc_cards{
   display: flex;
   flex-direction: column;
-  margin-left: 20%;
+  margin-left: 10%;
   margin-top: 30px;
 }
 </style>

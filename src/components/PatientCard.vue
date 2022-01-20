@@ -2,12 +2,14 @@
 <div class="card">
     <img :src="require('../assets/avatar.png')" alt="avatar" class="avatar__img">
     <div class="card__title">
-      <p class="card__title__main">{{ patient.surName}} {{patient.name}} {{patient.patronymic}}</p>
-<!--      <p class="card__title__second" >Дата последнего посещения: {{ d.date }}</p>-->
-<!--      <p class="card__title__second">Последний диагноз: {{d.session.diagnosis.name}}</p>-->
+      <p class="card__title__main" @click="show= !show">{{ schedule.session.patient.surName}} {{schedule.session.patient.name}} {{schedule.session.patient.patronymic}}</p>
+      <div v-show="show">
+        <p class="card__title__second" >Дата последнего посещения: {{ schedule.date }}</p>
+        <p class="card__title__second">Последний диагноз: {{schedule.session.diagnosis.name}}</p>
+      </div>
     </div>
     <div class="button__card">
-      <custom-button @click="$router.push('/emc/' + patient.id)">ЭМК</custom-button>
+      <custom-button @click="$router.push('/emc/' + schedule.session.patient.id)">ЭМК</custom-button>
     </div>
   </div>
 </template>
@@ -20,11 +22,13 @@ export default {
     CustomButton
   },
   props: {
-    patient: {
+    schedule: {
       type: Object
-    },
-    d: {
-      type: Object
+    }
+  },
+  data () {
+    return {
+      show: false
     }
   }
 }
@@ -44,11 +48,13 @@ export default {
   background-color: white;
   margin-top: 30px;
   display: flex;
+  justify-content: space-between;
   margin-bottom: 60px;
 }
 
 .avatar__img{
   max-height: 216px;
+  max-width: 216px;
 }
 .button__card{
   display: flex;

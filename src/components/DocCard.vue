@@ -1,22 +1,79 @@
 <template>
-<div class="card">
+<div class="card" v-if="!showConc && !showIndicators">
   <p class="card__title">{{document.session.sessionName}}</p>
   <p class="card__text">Врач: {{document.employee.surName}}</p>
   <p class="card__text">Дата приема: {{document.date}}</p>
-  <custom-button style="align-self: end">Смотреть отчет</custom-button>
+  <custom-button style="align-self: end" @click="this.showConc=true">Смотреть отчет</custom-button>
 </div>
+  <div v-else-if="showConc" class="conclusion" v-on:mouseup="changeColor()" v-on:mousemove="changeColor()" v-on:mouseover="changeColor"
+       v-on:mouseleave="changeColor()">
+    <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th v-for="(value, key) in document.session.conclusion[0]" v-bind:key="key">{{key}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="conc in document.session.conclusion" v-bind:key="conc">
+        <td v-for="(value, key) in conc" v-bind:key="key" class="valuesIndicator"
+            @click="this.fetchAnalysis(Object.values(conc)[0]); showIndicators=true; showConc=false">{{value}}</td>
+      </tr>
+    </tbody>
+    </table>
+    <custom-button style="align-self: end" @click="this.showConc=false">Скрыть</custom-button>
+  </div>
+  <div v-else-if="showIndicators" class="conclusion">
+    <change-table :indicators="indicators"></change-table>
+    <custom-button style="align-self: end" @click="this.showIndicators=false; showConc=true">Скрыть</custom-button>
+  </div>
 </template>
 
 <script>
 import CustomButton from './UI/Button'
+import axios from 'axios'
+import ChangeTable from './ChangeTable'
 export default {
   name: 'DocCard',
   components: {
+    ChangeTable,
     CustomButton
   },
   props: {
     document: {
       type: Object
+    }
+  },
+  data () {
+    return {
+      showConc: false,
+      showIndicators: false,
+      indicators: []
+    }
+  },
+  methods: {
+    changeColor () {
+      var arr = document.getElementsByTagName('tr')
+      for (let i = 0; i < arr.length; i++) {
+        console.log(arr[i].parentElement)
+        if (arr[i].textContent.includes('false')) {
+          arr[i].style.color = 'red'
+        }
+      }
+    },
+    async fetchAnalysis (name) {
+      try {
+        const response = await axios.get('http://localhost:8080/api/schedule/find/patient/indicator',
+          {
+            params: {
+              id: 2,
+              name: name
+            }
+          }
+        )
+        this.indicators = response.data
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }
@@ -31,6 +88,8 @@ export default {
   flex-direction: column;
   min-width: 400px;
   margin-bottom: 54px;
+  padding: 50px;
+  border-radius: 15px;
 }
 .card__title{
   font-size: 24px;
@@ -40,5 +99,21 @@ export default {
   font-size: 18px;
   margin: 20px;
   color: #515151;
+}
+
+.conclusion{
+  display: flex;
+  flex-direction: column;
+  min-width: 400px;
+  margin-bottom: 54px;
+  padding: 50px;
+  border-radius: 15px;
+}
+th, tr, td, .table-bordered{
+  border: 1px #515151 solid;
+  font-size: 20px;
+}
+tr, td {
+  padding: 10px;
 }
 </style>

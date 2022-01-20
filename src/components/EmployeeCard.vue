@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card main__card">
     <img :src="require('../assets/avatar.png')" alt="avatar" class="avatar__img">
     <div class="card__title">
       <p class="card__title__main">{{ employee.surName}} {{employee.name}} {{employee.patronymic}}</p>
@@ -14,7 +14,7 @@
   <div class="card single__button">
     <div class="card__title">
       <p class="card__title__main__blue">Личные данные</p>
-      <ui-list :type="2">
+      <ui-list :type="2" class="position">
         <ui-item>
           <ui-item-text-content>
             <ui-item-text1>{{employee.phoneNumber}}</ui-item-text1>
@@ -33,11 +33,33 @@
             <ui-item-text2>Табельный номер</ui-item-text2>
           </ui-item-text-content>
         </ui-item>
+        <ui-item>
+          <ui-item-text-content>
+            <ui-item-text1>{{employee.birthDate}}</ui-item-text1>
+            <ui-item-text2>Дата рождения</ui-item-text2>
+          </ui-item-text-content>
+        </ui-item>
     </ui-list>
     </div>
     <div class="button__card">
-        <custom-button>Изменить</custom-button>
-      </div>
+        <custom-button @click="showModal = true">Изменить</custom-button>
+    </div>
+    <transition name="modal">
+    <modal v-if="showModal" >
+      <template v-slot:header>
+        <h2>Изменение личных данных</h2>
+      </template>
+      <template v-slot:body>
+        <Form :empl="employee"></Form>
+      </template>
+      <template v-slot:footer>
+        <div class="row buttons__row">
+          <custom-button @click="showModal=false">Отменить</custom-button>
+          <custom-button @click="showModal=false">Изменить</custom-button>
+    </div>
+      </template>
+    </modal>
+    </transition>
   </div>
   <div class="card single__button">
     <div class="card__title">
@@ -47,22 +69,34 @@
       <p class="text">{{employee.experience}}</p>
     </div>
     <div class="button__card">
-        <custom-button>Изменить</custom-button>
+        <custom-button @click="showModal = true">Изменить</custom-button>
       </div>
   </div>
 </template>
 
 <script>
 import CustomButton from './UI/Button'
+import Modal from './UI/Modal'
+import Form from './UI/Form'
 export default {
   name: 'EmployeeCard',
   components: {
-    CustomButton
+    CustomButton,
+    Modal,
+    Form
   },
   props: {
     employee: {
       type: Object
     }
+  },
+  data () {
+    return {
+      showModal: false
+    }
+  },
+  methods: {
+
   }
 }
 </script>
@@ -71,7 +105,6 @@ export default {
 *{
   background: white;
 }
-
 .card{
   min-width: 70%;
   border-radius: 15px;
@@ -83,8 +116,13 @@ export default {
   margin-bottom: 60px;
 }
 
+.main__card {
+  max-width: 50%;
+}
+
 .avatar__img{
   max-height: 216px;
+  max-width: 216px;
 }
 .button__card{
   display: flex;
@@ -125,4 +163,14 @@ export default {
   color: #515151;
   padding: 15px;
 }
+
+.modal-header h3 {
+  margin-top: 0;
+  color: #42b983;
+}
+.buttons__row{
+  display: flex;
+  justify-content: flex-end;
+}
+
 </style>

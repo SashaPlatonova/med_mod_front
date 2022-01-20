@@ -5,10 +5,9 @@
         <label>Фамилия пациента:</label>
     </div>
     <patient-card
-      v-for="patient in searchPatient"
-      :d="ds[patient.id]"
-      :patient="patient"
-      :key="patient.id"
+      v-for="s in searchPatient"
+      :schedule="s"
+      :key="s.id"
     />
   </div>
 </template>
@@ -24,33 +23,21 @@ export default {
   },
   data () {
     return {
-      patients: [],
-      ds: [],
+      schedules: [],
       search: ''
     }
   },
   methods: {
     async fetchPatient () {
       try {
-        const response = await axios.get('http://localhost:8080/api/patient/find/employee/id',
+        const response = await axios.get('http://localhost:8080/api/schedule/find/last/id',
           {
             params: {
               id: this.$route.params.id
             }
           }
         )
-        this.patients = response.data
-        for (let i = 0; i < this.patients.length; i++) {
-          const patId = this.patients[i].id
-          const responseS = await axios.get('http://localhost:8080/api/schedule/find/last/id',
-            {
-              params: {
-                id: patId
-              }
-            }
-          )
-          this.ds[patId] = responseS.data
-        }
+        this.schedules = response.data
       } catch (e) {
         console.log(e)
       }
@@ -61,7 +48,7 @@ export default {
   },
   computed: {
     searchPatient () {
-      return this.patients.filter(p => p.surName.toLowerCase().includes(this.search.toLowerCase()))
+      return this.schedules.filter(s => s.session.patient.surName.toLowerCase().includes(this.search.toLowerCase()))
     }
   }
 }
@@ -70,9 +57,10 @@ export default {
 <style scoped>
 
 .search-wrapper {
-  position: relative;
+  /*position: relative;*/
   margin-left: 54px;
   min-width: 70%;
+  max-width: 70%;
   height: 30px;
   margin-bottom: 54px;
 }
