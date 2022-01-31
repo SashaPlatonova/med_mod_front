@@ -2,10 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Employee from '../views/Employee'
 import PatientList from '../views/PatientList'
 import Emc from '../views/Emc'
+import Profile from '../components/Profile'
+import Login from '../components/Login'
+import Schedule from '../components/Schedule'
 
 const routes = [
   {
-    path: '/employee',
+    path: '/employee/:id',
     component: Employee
   },
   {
@@ -15,6 +18,18 @@ const routes = [
   {
     path: '/emc/:id',
     component: Emc
+  },
+  {
+    path: '/profile',
+    component: Profile
+  },
+  {
+    path: '/login',
+    component: Login
+  },
+  {
+    path: '/schedule/:id',
+    component: Schedule
   }
 ]
 

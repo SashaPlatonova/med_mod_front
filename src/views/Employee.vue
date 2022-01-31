@@ -5,6 +5,7 @@
 <script>
 import EmployeeCard from '../components/EmployeeCard'
 import axios from 'axios'
+import authHeader from '../services/auth-header'
 export default {
   name: 'Employee',
   components: {
@@ -12,28 +13,37 @@ export default {
   },
   data () {
     return {
-      employees: []
+      employees: [],
+      header: ''
     }
   },
   methods: {
-    async fetchEmployee () {
+    async fetchEmployee (token) {
+      // var user = JSON.parse(localStorage.getItem('user'))
       try {
         const response = await axios.get('http://localhost:8080/api/employee/find/id',
           {
+            headers: { Authorization: 'Bearer ' + token },
             params: {
-              id: 1
+              id: this.$route.params.id
             }
           }
         )
         this.employees[0] = response.data
-        console.log(this.employees.name)
+        console.log(authHeader())
       } catch (e) {
         console.log(e)
+        console.log('****')
       }
     }
   },
+  computed: {
+    currentUser () {
+      return this.$store.state.auth.user
+    }
+  },
   created () {
-    this.fetchEmployee()
+    this.fetchEmployee(this.currentUser.token)
   }
 }
 </script>

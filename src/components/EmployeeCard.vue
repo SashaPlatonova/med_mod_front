@@ -8,7 +8,7 @@
     </div>
     <div class="button__card">
       <custom-button @click="$router.push('/patientList/' + employee.id)">Пациенты</custom-button>
-      <custom-button>Расписание</custom-button>
+      <custom-button @click="$router.push('/schedule/' + employee.id)">Расписание</custom-button>
     </div>
   </div>
   <div class="card single__button">
@@ -50,13 +50,9 @@
         <h2>Изменение личных данных</h2>
       </template>
       <template v-slot:body>
-        <Form :empl="employee"></Form>
+        <Form :empl="employee" @update-empl="updateEmployee"></Form>
       </template>
       <template v-slot:footer>
-        <div class="row buttons__row">
-          <custom-button @click="showModal=false">Отменить</custom-button>
-          <custom-button @click="showModal=false">Изменить</custom-button>
-    </div>
       </template>
     </modal>
     </transition>
@@ -78,6 +74,7 @@
 import CustomButton from './UI/Button'
 import Modal from './UI/Modal'
 import Form from './UI/Form'
+import axios from 'axios'
 export default {
   name: 'EmployeeCard',
   components: {
@@ -96,7 +93,43 @@ export default {
     }
   },
   methods: {
-
+    async updateEmployee (employee) {
+      try {
+        const response = await axios.put('http://localhost:8080/api/employee/update',
+          {
+            id: this.employee.id,
+            personnelNum: this.employee.personnelNum,
+            name: this.employee.name,
+            surName: this.employee.surName,
+            patronymic: this.employee.patronymic,
+            gender: this.employee.gender,
+            email: employee.email,
+            phoneNumber: employee.phoneNumber,
+            birthDate: employee.birthDate,
+            username: this.employee.username,
+            password: this.employee.password,
+            experience: employee.experience,
+            department: this.employee.department,
+            qualification: this.employee.qualification,
+            education: employee.education,
+            photo: this.employee.photo,
+            roleId: this.employee.roleId
+          },
+          {
+            headers: { Authorization: 'Bearer ' + this.currentUser.token }
+          }
+        )
+        console.log(response)
+        this.showModal = false
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  },
+  computed: {
+    currentUser () {
+      return this.$store.state.auth.user
+    }
   }
 }
 </script>

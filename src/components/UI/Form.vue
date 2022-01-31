@@ -3,12 +3,16 @@
     <div class="row">
       <h4>Личные данные </h4>
       <div class="input-group input-group-icon">
-        <input type="tel" pattern="[0-9]{1}-[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}"
-               placeholder="Номер телефона 8-9**-***-**-**" v-model="phoneNumber"/>
+        <input type="tel" pattern="[0-9]{1}[0-9]{3}[0-9]{3}[0-9]{2}[0-9]{2}"
+               placeholder="Номер телефона 8-9**-***-**-**" v-model="employee.phoneNumber"/>
         <div class="input-icon"><i class="fa fa-user"></i></div>
       </div>
       <div class="input-group input-group-icon">
-        <input type="email" placeholder="Электронная почта" v-model="email"/>
+        <input type="email" placeholder="Электронная почта" v-model="employee.email"/>
+        <div class="input-icon"><i class="fa fa-envelope"></i></div>
+      </div>
+      <div class="input-group input-group-icon">
+        <input type="text" placeholder="UserName" v-model="employee.username"/>
         <div class="input-icon"><i class="fa fa-envelope"></i></div>
       </div>
     </div>
@@ -30,20 +34,24 @@
     </div>
     <div class="row">
       <div class="input-group input-group-icon">
-        <textarea placeholder="Образование" v-model="education"/>
+        <textarea placeholder="Образование" v-model="employee.education"/>
         <div class="input-icon"><i class="fa fa-envelope"></i></div>
       </div>
       <div class="input-group input-group-icon">
-        <textarea placeholder="Опыт работы" v-model="experience"/>
+        <textarea placeholder="Опыт работы" v-model="employee.experience"/>
         <div class="input-icon"><i class="fa fa-envelope"></i></div>
       </div>
     </div>
     <div class="row">
       <h4>Соглашение</h4>
       <div class="input-group">
-        <input id="terms" type="checkbox"/>
+        <input id="terms" type="checkbox" v-model="agree"/>
         <label for="terms">Я поддтверждаю запрос на изменение личных данных</label>
       </div>
+    </div>
+    <div class="row buttons__row">
+      <custom-button @click="!showModal">Отменить</custom-button>
+      <custom-button @click="updateEmpl">Изменить</custom-button>
     </div>
   </form>
 </template>
@@ -61,11 +69,33 @@ export default {
   },
   data () {
     return {
-      phoneNumber: this.empl.phoneNumber,
-      email: this.empl.email,
-      birthDate: this.empl.birthDate,
-      education: this.empl.education,
-      experience: this.empl.experience
+      employee: {
+        id: this.empl.id,
+        personnelNum: this.empl.personnelNum,
+        name: this.empl.name,
+        surName: this.empl.surName,
+        patronymic: this.empl.patronymic,
+        gender: this.empl.gender,
+        email: this.empl.email,
+        phoneNumber: this.empl.phoneNumber,
+        birthDate: this.empl.birthDate,
+        username: this.empl.username,
+        password: this.empl.password,
+        experience: this.empl.experience,
+        department: this.empl.department,
+        qualification: this.empl.qualification,
+        education: this.empl.education,
+        photo: this.empl.photo,
+        roleId: this.empl.roleId
+      },
+      agree: false
+    }
+  },
+  methods: {
+    updateEmpl () {
+      if (this.agree) {
+        this.$emit('update-empl', this.employee)
+      }
     }
   }
 }
