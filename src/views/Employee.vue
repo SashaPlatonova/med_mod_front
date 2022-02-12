@@ -18,12 +18,11 @@ export default {
     }
   },
   methods: {
-    async fetchEmployee (token) {
-      // var user = JSON.parse(localStorage.getItem('user'))
+    async fetchEmployee () {
       try {
         const response = await axios.get('http://localhost:8080/api/employee/find/id',
           {
-            headers: { Authorization: 'Bearer ' + token },
+            headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() },
             params: {
               id: this.$route.params.id
             }
@@ -37,13 +36,13 @@ export default {
       }
     }
   },
-  computed: {
-    currentUser () {
-      return this.$store.state.auth.user
-    }
-  },
+  // computed: {
+  //   currentUser () {
+  //     return this.$store.state.auth.user
+  //   }
+  // },
   created () {
-    this.fetchEmployee(this.currentUser.token)
+    this.fetchEmployee()
   }
 }
 </script>

@@ -37,6 +37,9 @@
     </template>
   <template v-slot:footer>
     <custom-button @click="showDialog=false">Закрыть</custom-button>
+    <custom-button v-if="selectedEvent.title==='Свободно'"
+                   @click="$router.push('/appointment/'+selectedEvent.scheduleId)">Записать</custom-button>
+    <custom-button v-else @click="$router.push('/report/'+selectedEvent.id)">Провести прием</custom-button>
   </template>
 </modal>
   </div>
@@ -74,7 +77,7 @@ export default {
       try {
         const response = await axios.get('http://localhost:8080/api/schedule/find/employee/id',
           {
-            // headers: { Authorization: 'Bearer ' + token },
+            headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() },
             params: {
               id: this.$route.params.id
             }
@@ -100,13 +103,15 @@ export default {
           var patient = null
           var content = null
           var id = null
+          var scheduleId = this.sessions[i].id
           if (this.sessions[i].session != null) {
             title = this.sessions[i].session.sessionName
             patient = this.sessions[i].session.patient.surName + ' ' + this.sessions[i].session.patient.name
             content = 'Пациент: ' + patient + '<br>' + 'Дата рождения:' +
               this.sessions[i].session.patient.birthDate + '<br>' + '<strong>Контакты</strong>' + '<br>' +
               this.sessions[i].session.patient.phoneNumber +
-              ' ' + this.sessions[i].session.patient.email
+              ' ' + this.sessions[i].session.patient.email + '<br>' +
+              'Кабинет: ' + this.sessions[i].office
             id = this.sessions[i].session.id
           }
           this.events.push({
@@ -116,7 +121,8 @@ export default {
             content: (patient == null ? '' : patient),
             contentFull: content,
             class: 'health',
-            id: id
+            id: id,
+            scheduleId: scheduleId
           })
         }
       } catch (e) {
@@ -127,7 +133,7 @@ export default {
       try {
         const response = await axios.delete('http://localhost:8080/api/document/delete',
           {
-            // headers: { Authorization: 'Bearer ' + token },
+            headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() },
             params: {
               id: event.id
             }

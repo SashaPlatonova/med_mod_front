@@ -54,7 +54,6 @@ export default {
     changeColor () {
       var arr = document.getElementsByTagName('tr')
       for (let i = 0; i < arr.length; i++) {
-        console.log(arr[i].parentElement)
         if (arr[i].textContent.includes('false')) {
           arr[i].style.color = 'red'
         }

@@ -4,7 +4,7 @@
     <div class="card__title">
       <p class="card__title__main">{{ document.session.patient.surName}} {{document.session.patient.name}} {{document.session.patient.patronymic}}</p>
       <p class="card__title__second" >Дата последнего посещения: {{ document.date }}</p>
-      <p class="card__title__second">Последний диагноз: {{document.session.diagnosis.name}}</p>
+      <p class="card__title__second" v-if="document.session.diagnosis!=null">Последний диагноз: {{document.session.diagnosis.name}}</p>
     </div>
   <ui-list :type="2">
         <ui-item>
@@ -39,7 +39,7 @@
         </ui-item>
     </ui-list>
   <div class="buttons">
-    <custom-button>Записать</custom-button>
+    <custom-button @click="$router.push('/appointment/'+document.session.patient.id)">Записать</custom-button>
     <custom-button>Заключения</custom-button>
   </div>
   </div>
@@ -65,6 +65,7 @@ export default {
 
 *{
   background: white;
+  position: unset;
 }
 
 .card{

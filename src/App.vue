@@ -17,8 +17,8 @@
     </div>
     <div id="nav-content" tabindex="0">
       <ul class="navUl">
-        <li class="navLi"><a href="#" @click="$router.push('/employee')">Аккаунт</a></li>
-        <li class="navLi"><a href="#">Выход</a></li>
+        <li class="navLi"><a href="#" @click="toProfile">Аккаунт</a></li>
+        <li class="navLi"><a href="#" @click="$router.push('/login')">Выход</a></li>
       </ul>
     </div>
   </div>
@@ -29,6 +29,20 @@
 </div>
 </template>
 <script>
+export default {
+  data () {
+    return {
+      id: 0
+    }
+  },
+  methods: {
+    toProfile () {
+      const parsed = JSON.parse(localStorage.getItem('user'))
+      this.id = parsed.id
+      this.$router.push('/employee/' + this.id)
+    }
+  }
+}
 </script>
 
 <style>

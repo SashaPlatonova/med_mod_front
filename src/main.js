@@ -7,6 +7,7 @@ import BalmUIPlus from 'balm-ui-plus'
 import 'balm-ui-css'
 import components from './components/UI'
 import { FontAwesomeIcon } from './plugins/font-awesome'
+import VueCookies from 'vue3-cookies'
 
 const app = createApp(App)
 
@@ -17,7 +18,9 @@ components.forEach(component => {
 
 app.use(BalmUI)
 app.use(BalmUIPlus)
+app.use(VueCookies)
 app.use(router)
 app.use(store)
+router.app = app
 
 app.mount('#app')

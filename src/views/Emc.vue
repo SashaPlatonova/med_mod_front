@@ -37,6 +37,7 @@ export default {
       try {
         const response = await axios.get('http://localhost:8080/api/schedule/find/patient/id',
           {
+            headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() },
             params: {
               id: this.$route.params.id
             }
@@ -61,6 +62,9 @@ export default {
 </script>
 
 <style scoped>
+* {
+  position: unset;
+}
 .search-wrapper {
   position: relative;
   margin-left: 54px;

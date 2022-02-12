@@ -4,8 +4,10 @@
     <div class="card__title">
       <p class="card__title__main" @click="show= !show">{{ schedule.session.patient.surName}} {{schedule.session.patient.name}} {{schedule.session.patient.patronymic}}</p>
       <div v-show="show">
-        <p class="card__title__second" >Дата последнего посещения: {{ schedule.date }}</p>
-        <p class="card__title__second">Последний диагноз: {{schedule.session.diagnosis.name}}</p>
+        <p class="card__title__second" v-if="schedule.session!=null">Дата последнего посещения: {{ schedule.date }}</p>
+        <p v-else class="card__title__second">Этоо пациент еще не был у Вас на приеме</p>
+        <p class="card__title__second" v-if="schedule.session.diagnosis!=null">Последний диагноз: {{schedule.session.diagnosis.name}}</p>
+        <p v-else class="card__title__second">Нет диагнозов</p>
       </div>
     </div>
     <div class="button__card">
@@ -38,6 +40,7 @@ export default {
 
 *{
   background: white;
+  position: unset;
 }
 
 .card{

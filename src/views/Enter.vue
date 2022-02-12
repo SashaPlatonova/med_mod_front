@@ -35,25 +35,25 @@
       </div>
       <div class="box-root padding-top--24 flex-flex flex-direction--column" style="flex-grow: 1; z-index: 9;">
         <div class="box-root padding-top--48 padding-bottom--24 flex-flex flex-justifyContent--center">
-          <h1><a>"КДЦ с поликлиникой" управление делами президента</a></h1>
+          <h1><a>"КДЦ с поликлиникой" управление делами Президента Российской Федерации</a></h1>
 
         </div>
         <div class="formbg-outer">
           <div class="formbg">
             <div class="formbg-inner padding-horizontal--48">
               <span class="padding-bottom--15">Введите данные для входа в аккаунт</span>
-              <Form @submit="handleLogin" :validation-schema="schema">
+              <Form @submit="login" :validation-schema="schema">
         <div class="form-group">
           <div class="field padding-bottom--24">
           <label>Имя пользователя</label>
-          <Field name="username" type="text" class="form-control" />
+          <Field name="username" type="text" class="form-control" v-model="userName"/>
           <ErrorMessage name="username" class="error-feedback" />
           </div>
         </div>
         <div class="form-group">
           <div class="field padding-bottom--24">
           <label>Пароль</label>
-          <Field name="password" type="password" class="form-control" />
+          <Field name="password" type="password" class="form-control" v-model="pass"/>
           <ErrorMessage name="password" class="error-feedback" />
           </div>
         </div>
@@ -78,11 +78,6 @@
           </div>
           <div class="footer-link padding-top--24">
             <span>Нет данных для входа? Свяжитесь с администрацией</span>
-<!--            <div class="listing padding-top&#45;&#45;24 padding-bottom&#45;&#45;24 flex-flex center-center">-->
-<!--              <span><a href="#">© Stackfindover</a></span>-->
-<!--              <span><a href="#">Contact</a></span>-->
-<!--              <span><a href="#">Privacy & terms</a></span>-->
-<!--            </div>-->
           </div>
         </div>
       </div>
@@ -93,9 +88,10 @@
 <script>
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
+import axios from 'axios'
 
 export default {
-  name: 'Login',
+  name: 'Enter',
   components: {
     Form,
     Field,
@@ -111,33 +107,33 @@ export default {
       loading: false,
       id: null,
       message: '',
+      userName: '',
+      pass: '',
       schema
     }
   },
-  computed: {
-    loggedIn () {
-      return this.$store.state.auth.status.loggedIn
-    }
-  },
   methods: {
-    handleLogin (user) {
-      this.loading = true
-
-      this.$store.dispatch('auth/login', user).then(
-        () => {
-          this.id = this.$store.state.auth.user.id
-          this.$router.push('/employee/' + this.id)
-        },
-        (error) => {
-          this.loading = false
-          this.message =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString()
+    async login () {
+      try {
+        const response = await axios.post('http://localhost:8080/api/auth/signin',
+          {
+            username: this.userName,
+            password: this.pass
+          }
+        )
+        if (response.data.token) {
+          console.log('1111')
+          console.log(this.$cookies.keys().join('\n'))
+          // this.$cookies.set('token', response.data.token, 60 * 60 * 24 * 30)
+          this.$cookies.set('token', response.data.token, 60 * 60 * 24 * 30)
+          console.log(this.$cookies.get('token').toString())
+          console.log('token')
+          this.$router.push('/employee/' + response.data.id)
         }
-      )
+      } catch (e) {
+        console.log(e)
+        console.log('****')
+      }
     }
   }
 }

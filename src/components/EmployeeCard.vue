@@ -105,7 +105,7 @@ export default {
             gender: this.employee.gender,
             email: employee.email,
             phoneNumber: employee.phoneNumber,
-            birthDate: employee.birthDate,
+            birthDate: this.employee.birthDate,
             username: this.employee.username,
             password: this.employee.password,
             experience: employee.experience,
@@ -116,7 +116,7 @@ export default {
             roleId: this.employee.roleId
           },
           {
-            headers: { Authorization: 'Bearer ' + this.currentUser.token }
+            headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() }
           }
         )
         console.log(response)

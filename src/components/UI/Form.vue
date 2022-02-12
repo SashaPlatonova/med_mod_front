@@ -116,7 +116,7 @@ body {
   background-color: #e3e3e3;
 }
 h4 {
-  color: #f0a500;
+  color: #758A99;
 }
 input,textarea,
 input[type="radio"] + label,
@@ -137,13 +137,13 @@ select {
 }
 input:focus, textarea:focus {
   outline: 0;
-  border-color: #bd8200;
+  border-color: #758A99;
 }
 input:focus + .input-icon i {
-  color: #f0a500;
+  color: #758A99;
 }
 input:focus + .input-icon:after {
-  border-right-color: #f0a500;
+  border-right-color: #758A99;
 }
 input[type="radio"] {
   display: none;
@@ -171,9 +171,9 @@ input[type="radio"]:checked + label,
 input:checked + label:before,
 select:focus,
 select:active {
-  background-color: #f0a500;
+  background-color: #758A99;
   color: #fff;
-  border-color: #bd8200;
+  border-color: #758A99;
 }
 input[type="checkbox"] {
   display: none;
@@ -223,7 +223,7 @@ select:active {
   outline: 0;
 }
 select option {
-  background-color: #f0a500;
+  background-color: #758A99;
   color: #fff;
 }
 .input-group {

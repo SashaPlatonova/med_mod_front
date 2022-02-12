@@ -3,8 +3,11 @@ import Employee from '../views/Employee'
 import PatientList from '../views/PatientList'
 import Emc from '../views/Emc'
 import Profile from '../components/Profile'
-import Login from '../components/Login'
+// import Login from '../components/Login'
 import Schedule from '../components/Schedule'
+import Enter from '../views/Enter'
+import AppointmentForm from '../components/AppointmentForm'
+import Report from '../views/Report'
 
 const routes = [
   {
@@ -25,11 +28,19 @@ const routes = [
   },
   {
     path: '/login',
-    component: Login
+    component: Enter
   },
   {
     path: '/schedule/:id',
     component: Schedule
+  },
+  {
+    path: '/appointment/:id',
+    component: AppointmentForm
+  },
+  {
+    path: '/report/:id',
+    component: Report
   }
 ]
 
