@@ -3,7 +3,7 @@
     <div class="search-wrapper">
       <input type="text" v-model="search" placeholder="Введите фамилию:"/>
         <label>Фамилия пациента:</label>
-      <custom-button class="patientButton" @click="my = !my">Мои пациенты</custom-button>
+      <custom-button class="patientButton" @click="my = !my">{{buttonName}}</custom-button>
     </div>
     <patient-card
       v-for="s in searchPatient"
@@ -27,7 +27,9 @@ export default {
   data () {
     return {
       schedules: [],
+      currentList: [],
       my: false,
+      buttonName: 'Мои пациенты',
       search: ''
     }
   },
@@ -40,6 +42,7 @@ export default {
           }
         )
         this.schedules = response.data
+        this.currentList = this.schedules
       } catch (e) {
         console.log(e)
       }
@@ -48,13 +51,22 @@ export default {
   created () {
     this.fetchPatient()
   },
+  watch: {
+    my (newMy) {
+      if (newMy) {
+        this.currentList = this.schedules.filter(s => s.employee.id === Number(this.$route.params.id))
+        console.log(this.schedules[0].employee.id === Number(this.$route.params.id))
+        console.log(this.schedules[0].employee.id === 3)
+        this.buttonName = 'Все'
+      } else {
+        this.buttonName = 'Мои пациенты'
+        this.currentList = this.schedules
+      }
+    }
+  },
   computed: {
     searchPatient () {
-      if (this.my) {
-        return this.schedules.filter(s => s.employee.id === (this.$route.params.id) &&
-          s.session.patient.surName.toLowerCase().includes(this.search.toLowerCase()))
-      }
-      return this.schedules.filter(s => s.session.patient.surName.toLowerCase().includes(this.search.toLowerCase()))
+      return this.currentList.filter(s => s.session.patient.surName.toLowerCase().includes(this.search.toLowerCase()))
     }
   }
 }

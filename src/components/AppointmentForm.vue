@@ -56,6 +56,7 @@
 <script>
 import Button from './UI/Button'
 import axios from 'axios'
+import dateFormater from '../services/dateFormater'
 export default {
   name: 'AppointmentForm',
   components: Button,
@@ -170,6 +171,7 @@ export default {
             }
           )
           this.schedule = response.data
+          this.schedule.date = dateFormater(this.schedule.date, true)
         } catch (e) {
           console.log(e)
         }

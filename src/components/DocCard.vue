@@ -34,6 +34,7 @@ import CustomButton from './UI/Button'
 import axios from 'axios'
 import ChangeTable from './ChangeTable'
 import LineChartCust from './LineChartCust'
+import dateFormater from '../services/dateFormater'
 export default {
   name: 'DocCard',
   components: {
@@ -77,7 +78,10 @@ export default {
             }
           }
         )
-        this.indicators = response.data
+        for (const indicator of response.data) {
+          indicator.date = dateFormater(indicator.date, false)
+          this.indicators.push(indicator)
+        }
         if (response.status === 200) {
           this.loaded = true
         }
@@ -119,11 +123,26 @@ export default {
   padding: 50px;
   border-radius: 15px;
 }
-th, tr, td, .table-bordered{
-  border: 1px #515151 solid;
+.table {
+  width: 100%;
+  margin-bottom: 20px;
+  border: 1px solid #dddddd;
+  border-collapse: collapse;
+  background: white;
   font-size: 20px;
 }
-tr, td {
-  padding: 10px;
+.table th {
+  font-weight: bold;
+  padding: 5px;
+  background: #efefef;
+  border: 1px solid #dddddd;
+}
+.table caption {
+  background: #efefef;
+  text-align: center;
+}
+.table td {
+  border: 1px solid #dddddd;
+  padding: 5px;
 }
 </style>

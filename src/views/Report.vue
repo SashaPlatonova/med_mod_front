@@ -1,9 +1,12 @@
 <template>
 <div class="cards">
   <div class="table__card">
-  <table class="table table-striped table-bordered">
+  <table class="table">
+    <caption>Отчет о приеме</caption>
     <thead>
-    <tr>Отчет о приеме</tr>
+      <tr>
+        <th v-for="(value, key) in session.conclusion[0]" v-bind:key="key">{{key}}</th>
+      </tr>
     </thead>
     <tbody>
       <tr v-for="(e, i) in session.conclusion.length" v-bind:key="i">
@@ -52,6 +55,7 @@ import DocCard from '../components/DocCard'
 import axios from 'axios'
 import CustomButton from '../components/UI/Button'
 import Standart from '../components/Standart'
+import dateFormater from '../services/dateFormater'
 
 export default {
   name: 'Report',
@@ -83,7 +87,6 @@ export default {
         try {
           const response = await axios.get(this.d.standart.docName)
           const arr = response.data.obj.sections
-          // this.fullDoc = response.data
           for (let i = 0; i <= arr.length; i++) {
             this.fullDoc += arr[i].content
             if (arr[i].title.indexOf('Лечение') !== -1) {
@@ -136,7 +139,11 @@ export default {
             }
           }
         )
-        this.documents = response.data
+        for (const doc of response.data) {
+          doc.date = dateFormater(doc.date, true)
+          this.documents.push(doc)
+        }
+        // this.documents = response.data
       } catch (e) {
         console.log(e)
       }
@@ -211,21 +218,27 @@ export default {
 * {
   position: unset;
 }
-.table{
-  margin-top: 20px;
+.table {
+  width: 100%;
   margin-bottom: 20px;
- }
-th, tr, td, .table-bordered{
-  border: 1px #515151 solid;
+  border: 1px solid #dddddd;
+  border-collapse: collapse;
+  background: white;
   font-size: 20px;
-  background-color: white;
 }
-tr, td {
-  padding: 10px;
+.table th {
+  font-weight: bold;
+  padding: 5px;
+  background: #efefef;
+  border: 1px solid #dddddd;
 }
-td{
-  min-width: 400px;
-  min-height: min-content;
+.table caption {
+  background: #efefef;
+  text-align: center;
+}
+.table td {
+  border: 1px solid #dddddd;
+  padding: 5px;
 }
 .search-wrapper {
   position: relative;
@@ -278,6 +291,7 @@ textarea{
   border: white;
   resize: none;
   font-size: 20px;
+  min-width: 400px;
 }
 
 datalist {

@@ -18,6 +18,7 @@
 <script>
 import EmcCard from '../components/EmcCard'
 import DocCard from '../components/DocCard'
+import dateFormater from '../services/dateFormater'
 import axios from 'axios'
 export default {
   name: 'Emc',
@@ -43,7 +44,10 @@ export default {
             }
           }
         )
-        this.documents = response.data
+        for (const doc of response.data) {
+          doc.date = dateFormater(doc.date, true)
+          this.documents.push(doc)
+        }
         this.document = this.documents[0]
       } catch (e) {
         console.log(e)
