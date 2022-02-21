@@ -6,21 +6,41 @@
     <tr>Отчет о приеме</tr>
     </thead>
     <tbody>
-      <tr v-for="i in session.conclusion.length" v-bind:key="i">
+      <tr v-for="(e, i) in session.conclusion.length" v-bind:key="i">
         <td v-for="(v, k) in session.conclusion[i]" v-bind:key="k" class="valuesIndicator">
           <textarea v-if="k==='Значение' || v===''" v-model="session.conclusion[i].Значение"></textarea>
           <p v-else>{{v}}</p>
         </td>
       </tr>
+      <tr>
+        <td>Диагноз</td>
+        <td>
+          <input v-model="diagCode" list="diagnosis"/>
+          <datalist id="diagnosis">
+          <option v-for="d in searchDiagnosis" v-bind:key="d.id" :value="d.code">{{d.name}}</option>
+        </datalist>
+        </td>
+      </tr>
     </tbody>
   </table>
   <custom-button @click="updateSession">Завершить</custom-button>
+    <custom-button @click="fetchStandart">Рекомендации</custom-button>
   </div>
   <div class="doc_cards">
     <div class="search-wrapper">
       <input type="text" v-model="search" placeholder="Введите название:"/>
   </div>
-    <DocCard v-for="doc in searchDoc"
+    <standart v-if="showStan">
+      <slot>
+        <div v-html="content" class="standart">
+        </div>
+        <div class="buttons__row">
+        <custom-button @click="showStan=false">Скрыть</custom-button>
+        <custom-button @click="isFull= !isFull">Показать все</custom-button>
+        </div>
+      </slot>
+    </standart>
+    <DocCard v-else v-for="doc in searchDoc"
            :document="doc"
            :key="doc.id"/>
   </div>
@@ -31,21 +51,63 @@
 import DocCard from '../components/DocCard'
 import axios from 'axios'
 import CustomButton from '../components/UI/Button'
+import Standart from '../components/Standart'
 
 export default {
   name: 'Report',
   components: {
     CustomButton,
-    DocCard
+    DocCard,
+    Standart
   },
   data () {
     return {
       documents: [],
       session: {},
-      search: ''
+      search: '',
+      showStan: false,
+      content: '',
+      diagnosis: [],
+      diagCode: '',
+      d: null,
+      fullDoc: '',
+      treatment: '',
+      isFull: false
     }
   },
   methods: {
+    async fetchStandart () {
+      await this.getDiagnosis()
+      if (this.d != null) {
+        this.showStan = true
+        try {
+          const response = await axios.get(this.d.standart.docName)
+          const arr = response.data.obj.sections
+          // this.fullDoc = response.data
+          for (let i = 0; i <= arr.length; i++) {
+            this.fullDoc += arr[i].content
+            if (arr[i].title.indexOf('Лечение') !== -1) {
+              this.treatment = arr[i].content
+              this.content = this.treatment
+            }
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      }
+    },
+    async fetchDiagnosis () {
+      try {
+        const response = await axios.get('http://localhost:8080/api/diagnosis/all',
+          {
+            headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() }
+          }
+        )
+        this.diagnosis = response.data
+      } catch (e) {
+        console.log(e)
+      }
+    },
     async fetchSessionInfo () {
       try {
         const response = await axios.get('http://localhost:8080/api/document/find/id',
@@ -79,6 +141,23 @@ export default {
         console.log(e)
       }
     },
+    async getDiagnosis () {
+      if (this.diagCode !== '') {
+        try {
+          const response = await axios.get('http://localhost:8080/api/diagnosis/find/code',
+            {
+              headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() },
+              params: {
+                code: this.diagCode
+              }
+            }
+          )
+          this.d = response.data
+        } catch (e) {
+          console.log(e)
+        }
+      }
+    },
     async updateSession () {
       try {
         const response = await axios.put('http://localhost:8080/api/document/update',
@@ -88,7 +167,7 @@ export default {
             office: this.session.office,
             category: this.session.category,
             patient: this.session.patient,
-            diagnosis: this.session.diagnosis,
+            diagnosis: this.d,
             conclusion: this.session.conclusion
           },
           {
@@ -107,10 +186,23 @@ export default {
   computed: {
     searchDoc () {
       return this.documents.filter(d => d.session.sessionName.toLowerCase().includes(this.search.toLowerCase()))
+    },
+    searchDiagnosis () {
+      return this.diagnosis.filter(d => d.name.toLowerCase().includes(this.diagCode.toLowerCase()))
+    }
+  },
+  watch: {
+    isFull () {
+      if (this.isFull) {
+        this.content = this.fullDoc
+      } else {
+        this.content = this.treatment
+      }
     }
   },
   created () {
     this.fetchSessionInfo()
+    this.fetchDiagnosis()
   }
 }
 </script>
@@ -141,6 +233,12 @@ td{
   min-width: 70%;
   height: 30px;
   margin-bottom: 54px;
+}
+.standart{
+  background-color: white;
+  max-height: 1800px;
+  padding: 20px;
+  overflow: scroll;
 }
 
 input {
@@ -180,5 +278,14 @@ textarea{
   border: white;
   resize: none;
   font-size: 20px;
+}
+
+datalist {
+  max-height: 200px;
+}
+
+.buttons__row{
+  display: flex;
+  justify-content: space-between;
 }
 </style>

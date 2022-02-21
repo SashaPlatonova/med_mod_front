@@ -24,6 +24,7 @@
   </div>
   <div v-else-if="showIndicators" class="conclusion">
     <change-table :indicators="indicators"></change-table>
+    <line-chart-cust v-if="loaded" :ind="indicators"></line-chart-cust>
     <custom-button style="align-self: end" @click="this.showIndicators=false; showConc=true">Скрыть</custom-button>
   </div>
 </template>
@@ -32,9 +33,11 @@
 import CustomButton from './UI/Button'
 import axios from 'axios'
 import ChangeTable from './ChangeTable'
+import LineChartCust from './LineChartCust'
 export default {
   name: 'DocCard',
   components: {
+    LineChartCust,
     ChangeTable,
     CustomButton
   },
@@ -47,15 +50,19 @@ export default {
     return {
       showConc: false,
       showIndicators: false,
-      indicators: []
+      indicators: [],
+      loaded: false
     }
   },
   methods: {
     changeColor () {
       var arr = document.getElementsByTagName('tr')
       for (let i = 0; i < arr.length; i++) {
-        if (arr[i].textContent.includes('false')) {
-          arr[i].style.color = 'red'
+        if (arr[i].textContent.includes('нет')) {
+          var children = arr[i].children
+          for (let j = 0; j < children.length; j++) {
+            children[j].style.background = '#FFA2A2'
+          }
         }
       }
     },
@@ -63,13 +70,17 @@ export default {
       try {
         const response = await axios.get('http://localhost:8080/api/schedule/find/patient/indicator',
           {
+            headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() },
             params: {
-              id: 2,
+              id: this.document.session.patient.id,
               name: name
             }
           }
         )
         this.indicators = response.data
+        if (response.status === 200) {
+          this.loaded = true
+        }
       } catch (e) {
         console.log(e)
       }

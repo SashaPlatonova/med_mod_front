@@ -111,7 +111,7 @@ export default {
               this.sessions[i].session.patient.birthDate + '<br>' + '<strong>Контакты</strong>' + '<br>' +
               this.sessions[i].session.patient.phoneNumber +
               ' ' + this.sessions[i].session.patient.email + '<br>' +
-              'Кабинет: ' + this.sessions[i].office
+              'Кабинет: ' + this.sessions[i].session.office
             id = this.sessions[i].session.id
           }
           this.events.push({

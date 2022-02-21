@@ -8,6 +8,7 @@ import Schedule from '../components/Schedule'
 import Enter from '../views/Enter'
 import AppointmentForm from '../components/AppointmentForm'
 import Report from '../views/Report'
+import LineChartCust from '../components/LineChartCust'
 
 const routes = [
   {
@@ -41,6 +42,10 @@ const routes = [
   {
     path: '/report/:id',
     component: Report
+  },
+  {
+    path: '/test',
+    component: LineChartCust
   }
 ]
 

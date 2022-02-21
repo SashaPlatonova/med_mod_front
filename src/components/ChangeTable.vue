@@ -35,6 +35,9 @@ export default {
       var arr = document.getElementsByTagName('tr')
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].textContent.includes('false')) {
+          // for (let j = 0; j < arr[i].childNodes.length; j++) {
+          //   arr[i].childNodes[j].style.background = 'red'
+          // }
           arr[i].style.color = 'red'
         }
       }

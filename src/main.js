@@ -8,7 +8,9 @@ import 'balm-ui-css'
 import components from './components/UI'
 import { FontAwesomeIcon } from './plugins/font-awesome'
 import VueCookies from 'vue3-cookies'
+import { Chart, registerables } from 'chart.js'
 
+Chart.register(...registerables)
 const app = createApp(App)
 
 components.forEach(component => {
