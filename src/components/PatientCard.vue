@@ -53,6 +53,7 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 60px;
+  position: unset;
 }
 
 .avatar__img{

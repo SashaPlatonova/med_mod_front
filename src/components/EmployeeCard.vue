@@ -14,35 +14,19 @@
   <div class="card single__button">
     <div class="card__title">
       <p class="card__title__main__blue">Личные данные</p>
-      <ui-list :type="2" class="position">
-        <ui-item>
-          <ui-item-text-content>
-            <ui-item-text1>{{employee.phoneNumber}}</ui-item-text1>
-            <ui-item-text2>Телефон</ui-item-text2>
-          </ui-item-text-content>
-        </ui-item>
-        <ui-item>
-          <ui-item-text-content>
-            <ui-item-text1>{{employee.email}}</ui-item-text1>
-            <ui-item-text2>Почта</ui-item-text2>
-          </ui-item-text-content>
-        </ui-item>
-        <ui-item>
-          <ui-item-text-content>
-            <ui-item-text1>{{employee.personnelNum}}</ui-item-text1>
-            <ui-item-text2>Табельный номер</ui-item-text2>
-          </ui-item-text-content>
-        </ui-item>
-        <ui-item>
-          <ui-item-text-content>
-            <ui-item-text1>{{employee.birthDate}}</ui-item-text1>
-            <ui-item-text2>Дата рождения</ui-item-text2>
-          </ui-item-text-content>
-        </ui-item>
-    </ui-list>
+      <ul class="main__list">
+            <li>{{employee.phoneNumber}}</li>
+            <li class="second__list">Телефон</li>
+            <li>{{employee.email}}</li>
+            <li class="second__list">Почта</li>
+            <li>{{employee.personnelNum}}</li>
+            <li class="second__list">Табельный номер</li>
+            <li>{{employee.birthDate}}</li>
+            <li class="second__list">Дата рождения</li>
+      </ul>
     </div>
     <div class="button__card">
-        <custom-button @click="showModal = true">Изменить</custom-button>
+        <custom-button @click="showModal = true" v-if="myId==employee.id">Изменить</custom-button>
     </div>
     <transition name="modal">
     <modal v-if="showModal" >
@@ -65,7 +49,7 @@
       <p class="text">{{employee.experience}}</p>
     </div>
     <div class="button__card">
-        <custom-button @click="showModal = true">Изменить</custom-button>
+        <custom-button @click="showModal = true" v-if="myId==employee.id">Изменить</custom-button>
       </div>
   </div>
 </template>
@@ -89,7 +73,8 @@ export default {
   },
   data () {
     return {
-      showModal: false
+      showModal: false,
+      myId: 0
     }
   },
   methods: {
@@ -130,6 +115,17 @@ export default {
     currentUser () {
       return this.$store.state.auth.user
     }
+  },
+  created () {
+    if (localStorage.getItem('user')) {
+      try {
+        var currentUser = JSON.parse(localStorage.getItem('user'))
+        this.myId = currentUser.id
+      } catch (e) {
+        console.log(e)
+        console.log('****')
+      }
+    }
   }
 }
 </script>
@@ -137,6 +133,7 @@ export default {
 <style scoped>
 *{
   background: white;
+  position: unset;
 }
 .card{
   min-width: 70%;
@@ -147,10 +144,22 @@ export default {
   margin-top: 24px;
   display: flex;
   margin-bottom: 60px;
+  position: unset;
 }
 
 .main__card {
   max-width: 50%;
+}
+
+.main__list {
+  padding: 10px;
+  font-size: 18px;
+  color: #212121;
+}
+
+.second__list {
+  color: #7d7d7d;
+  margin-bottom: 20px;
 }
 
 .avatar__img{

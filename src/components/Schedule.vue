@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <vue-cal selected-date="2022-01-28"
+    <vue-cal selected-date="2022-02-02"
          :time-from="8 * 60"
          :time-to="24 * 60"
           locale="ru"

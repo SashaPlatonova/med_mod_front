@@ -12,6 +12,10 @@ import LineChartCust from '../components/LineChartCust'
 
 const routes = [
   {
+    path: '/',
+    component: Enter
+  },
+  {
     path: '/employee/:id',
     component: Employee
   },

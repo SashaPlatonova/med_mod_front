@@ -122,12 +122,12 @@ export default {
           }
         )
         if (response.data.token) {
-          console.log('1111')
-          console.log(this.$cookies.keys().join('\n'))
           // this.$cookies.set('token', response.data.token, 60 * 60 * 24 * 30)
+          var u = response.data
+          u.roles[0] = response.data.roles[0]
+          localStorage.setItem('user', JSON.stringify(u))
+          console.log(u)
           this.$cookies.set('token', response.data.token, 60 * 60 * 24 * 30)
-          console.log(this.$cookies.get('token').toString())
-          console.log('token')
           this.$router.push('/employee/' + response.data.id)
         }
       } catch (e) {

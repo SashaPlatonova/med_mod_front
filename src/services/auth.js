@@ -16,12 +16,10 @@ class AuthService {
       }, options)
       .then(response => {
         if (response.data.token) {
-          console.log('1111')
-          localStorage.setItem('user', JSON.stringify(response.data))
+          // localStorage.setItem('user', JSON.stringify(response.data))
           this.$cookies.set('token', response.data.token, 60 * 60 * 24 * 30)
+          this.$cookies.set('role', response.data.roles[0])
           window.$cookies.set('token', response.data.token, 60 * 60 * 24 * 30)
-          console.log(window.$cookies.get('token').toString())
-          console.log('token')
         }
 
         return response.data

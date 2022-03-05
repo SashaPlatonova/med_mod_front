@@ -37,9 +37,13 @@ export default {
   },
   methods: {
     toProfile () {
-      const parsed = JSON.parse(localStorage.getItem('user'))
-      this.id = parsed.id
-      this.$router.push('/employee/' + this.id)
+      try {
+        const parsed = JSON.parse(localStorage.getItem('user'))
+        this.id = parsed.id
+        this.$router.push('/employee/' + this.id)
+      } catch (e) {
+        console.log('Ошибка обращения у хранилищу')
+      }
     }
   }
 }

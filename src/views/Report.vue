@@ -5,17 +5,17 @@
     <caption>Отчет о приеме</caption>
     <thead>
       <tr>
-        <th v-for="(value, key) in session.conclusion[0]" v-bind:key="key">{{key}}</th>
+        <th v-for="(value, key) in session.category.structure[0]" v-bind:key="key">{{key}}</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(e, i) in session.conclusion.length" v-bind:key="i">
-        <td v-for="(v, k) in session.conclusion[i]" v-bind:key="k" class="valuesIndicator">
-          <textarea v-if="k==='Значение' || v===''" v-model="session.conclusion[i].Значение"></textarea>
+      <tr v-for="(e, i) in session.category.structure.length" v-bind:key="i">
+        <td v-for="(v, k) in session.category.structure[i]" v-bind:key="k" class="valuesIndicator">
+          <textarea v-if="k==='Значение' || v===''" v-model="session.category.structure[i].Значение"></textarea>
           <p v-else>{{v}}</p>
         </td>
       </tr>
-      <tr>
+      <tr v-if="access">
         <td>Диагноз</td>
         <td>
           <input v-model="diagCode" list="diagnosis"/>
@@ -76,7 +76,8 @@ export default {
       d: null,
       fullDoc: '',
       treatment: '',
-      isFull: false
+      isFull: false,
+      access: false
     }
   },
   methods: {
@@ -140,8 +141,10 @@ export default {
           }
         )
         for (const doc of response.data) {
-          doc.date = dateFormater(doc.date, true)
-          this.documents.push(doc)
+          if (doc.session.conclusion != null) {
+            doc.date = dateFormater(doc.date, true)
+            this.documents.push(doc)
+          }
         }
         // this.documents = response.data
       } catch (e) {
@@ -208,6 +211,12 @@ export default {
     }
   },
   created () {
+    if (localStorage.getItem('user')) {
+      var user = JSON.parse(localStorage.getItem('user'))
+      if (user.roles[0] === 'ROLE_USER') {
+        this.access = true
+      }
+    }
     this.fetchSessionInfo()
     this.fetchDiagnosis()
   }

@@ -3,7 +3,8 @@
   <p class="card__title">{{document.session.sessionName}}</p>
   <p class="card__text">Врач: {{document.employee.surName}}</p>
   <p class="card__text">Дата приема: {{document.date}}</p>
-  <custom-button style="align-self: end" @click="this.showConc=true">Смотреть отчет</custom-button>
+  <custom-button v-if="document.session.conclusion!=null" style="align-self: end" @click="this.showConc=true">Смотреть отчет</custom-button>
+  <p v-else class="card__text">Отчет недоступен</p>
 </div>
   <div v-else-if="showConc" class="conclusion" v-on:mouseup="changeColor()" v-on:mousemove="changeColor()" v-on:mouseover="changeColor"
        v-on:mouseleave="changeColor()">
@@ -16,7 +17,7 @@
     <tbody>
       <tr v-for="conc in document.session.conclusion" v-bind:key="conc">
         <td v-for="(value, key) in conc" v-bind:key="key" class="valuesIndicator"
-            @click="this.fetchAnalysis(Object.values(conc)[0]); showIndicators=true; showConc=false">{{value}}</td>
+            @click="this.fetchAnalysis(conc.Название); showIndicators=true; showConc=false">{{value}}</td>
       </tr>
     </tbody>
     </table>
@@ -98,6 +99,7 @@ export default {
   background-color: white;
 }
 .card{
+  position: unset;
   display: flex;
   flex-direction: column;
   min-width: 400px;

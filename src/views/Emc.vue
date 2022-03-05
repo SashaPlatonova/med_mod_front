@@ -11,6 +11,12 @@
            :document="doc"
            :key="doc.id"/>
   </div>
+  <div class="filters_list">
+    <li v-for="cat in categories" :key="cat.id" style="list-style: none">
+      <input type="checkbox" id="cat" :value="cat.name" style="min-width: 50%" v-model="selectedCats" class="checkbox-other">
+      <span>{{cat.name}}</span>
+    </li>
+  </div>
 </div>
   </div>
 </template>
@@ -30,6 +36,8 @@ export default {
     return {
       documents: [],
       document: null,
+      categories: [],
+      selectedCats: [],
       search: ''
     }
   },
@@ -52,14 +60,31 @@ export default {
       } catch (e) {
         console.log(e)
       }
+    },
+    async fetchCategories () {
+      try {
+        const response = await axios.get('http://localhost:8080/api/document/all/categories',
+          {
+            headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() }
+          }
+        )
+        this.categories = response.data
+        for (let i = 0; i < this.categories.length; i++) {
+          this.selectedCats.push(this.categories[i].name)
+        }
+      } catch (e) {
+        console.log(e)
+      }
     }
   },
   created () {
     this.fetchDocument()
+    this.fetchCategories()
   },
   computed: {
     searchDoc () {
-      return this.documents.filter(d => d.session.sessionName.toLowerCase().includes(this.search.toLowerCase()))
+      return this.documents.filter(d => d.session.sessionName.toLowerCase().includes(this.search.toLowerCase()) &&
+        this.selectedCats.includes(d.session.sessionName))
     }
   }
 }
@@ -111,11 +136,27 @@ input:focus + label {
 .cards{
   display: flex;
   /*justify-content: center;*/
+  position: unset;
 }
 .doc_cards{
   display: flex;
   flex-direction: column;
   margin-left: 10%;
   margin-top: 30px;
+  position: unset;
+}
+.filters_list {
+  min-width: 300px;
+  background: white;
+  border-radius: 15px;
+  margin-left: 54px;
+  max-height: min-content;
+  margin-top: 30px;
+  margin-bottom: 60px;
+}
+.filters_list li {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
 }
 </style>

@@ -17,22 +17,6 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-half">
-        <h4>Дата рождения</h4>
-        <div class="input-group">
-          <div class="col-third">
-            <input type="text" placeholder="DD"/>
-          </div>
-          <div class="col-third">
-            <input type="text" placeholder="MM"/>
-          </div>
-          <div class="col-third">
-            <input type="text" placeholder="YYYY"/>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
       <div class="input-group input-group-icon">
         <textarea placeholder="Образование" v-model="employee.education"/>
         <div class="input-icon"><i class="fa fa-envelope"></i></div>
