@@ -2,10 +2,9 @@
   <div>
   <div class="search-wrapper">
       <input type="text" v-model="search" placeholder="Введите название:"/>
-        <label>Название документа:</label>
   </div>
 <div class="cards">
-  <EmcCard :document="documents[0]"></EmcCard>
+  <EmcCard :document="document" @showFutures="changeFuture"></EmcCard>
   <div class="doc_cards">
   <DocCard v-for="doc in searchDoc"
            :document="doc"
@@ -38,7 +37,9 @@ export default {
       document: null,
       categories: [],
       selectedCats: [],
-      search: ''
+      search: '',
+      futures: null,
+      currentDocsList: []
     }
   },
   methods: {
@@ -53,13 +54,19 @@ export default {
           }
         )
         for (const doc of response.data) {
+          if (this.document == null && doc.session.conclusion != null) {
+            this.document = doc
+          }
           doc.date = dateFormater(doc.date, true)
           this.documents.push(doc)
+          this.currentDocsList.push(doc)
         }
-        this.document = this.documents[0]
       } catch (e) {
         console.log(e)
       }
+    },
+    changeFuture (future) {
+      this.futures = future
     },
     async fetchCategories () {
       try {
@@ -77,14 +84,31 @@ export default {
       }
     }
   },
+  watch: {
+    futures (newFuture) {
+      if (newFuture) {
+        this.currentDocsList = []
+        var i = 0
+        for (const doc of this.documents) {
+          if (new Date(doc.date) >= new Date()) {
+            this.currentDocsList[i] = doc
+            i++
+          }
+        }
+      } else {
+        this.currentDocsList = this.documents
+      }
+    }
+  },
   created () {
+    // this.futures = false
     this.fetchDocument()
     this.fetchCategories()
   },
   computed: {
     searchDoc () {
-      return this.documents.filter(d => d.session.sessionName.toLowerCase().includes(this.search.toLowerCase()) &&
-        this.selectedCats.includes(d.session.sessionName))
+      return this.currentDocsList.filter(d => d.session.sessionName.toLowerCase().includes(this.search.toLowerCase()) &&
+        this.selectedCats.includes(d.session.category.name))
     }
   }
 }
@@ -95,7 +119,7 @@ export default {
   position: unset;
 }
 .search-wrapper {
-  position: relative;
+  position: unset;
   margin-left: 54px;
   min-width: 70%;
   height: 30px;

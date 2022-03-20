@@ -19,8 +19,14 @@
             <li class="second__list">Дата рождения</li>
       </ul>
   <div class="buttons">
+    <custom-button @click="fetchPrescriptions(document.session.patient.id)">{{buttonText_2[Number(showPrescription)]}}</custom-button>
     <custom-button @click="$router.push('/appointment/'+document.session.patient.id)">Записать</custom-button>
-    <custom-button>Заключения</custom-button>
+    <custom-button @click="showFutures">{{buttonText_1[Number(future)]}}</custom-button>
+  </div>
+  <div v-if="showPrescription" class="prescriptions">
+    <ul>
+      <li v-for="p in prescriptions" :key="p">{{p}}</li>
+    </ul>
   </div>
   </div>
 
@@ -28,6 +34,7 @@
 
 <script>
 import CustomButton from './UI/Button'
+import axios from 'axios'
 export default {
   name: 'EMC',
   components: {
@@ -36,6 +43,39 @@ export default {
   props: {
     document: {
       type: Object
+    }
+  },
+  data () {
+    return {
+      buttonText_1: ['Назначенные приемы', 'Все приемы'],
+      buttonText_2: ['Назначения', 'Скрыть назначения'],
+      future: false,
+      showPrescription: false,
+      prescriptions: null
+    }
+  },
+  methods: {
+    showFutures () {
+      this.$emit('show-futures', !this.future)
+      this.future = !this.future
+    },
+    async fetchPrescriptions (id) {
+      this.showPrescription = !this.showPrescription
+      if (this.prescriptions == null) {
+        try {
+          const response = await axios.get('http://localhost:8080/api/schedule/find/prescription',
+            {
+              headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() },
+              params: {
+                id: id
+              }
+            }
+          )
+          this.prescriptions = response.data
+        } catch (e) {
+          console.log(e)
+        }
+      }
     }
   }
 }
@@ -58,7 +98,7 @@ export default {
   margin-top: 30px;
   /*display: flex;*/
   margin-bottom: 60px;
-  max-height: 890px;
+  max-height: min-content;
 }
 
 .avatar__img{
@@ -97,5 +137,11 @@ export default {
   display: flex;
   justify-content: flex-end;
   margin-left: 300px;
+}
+
+.prescriptions {
+  margin-top: 30px;
+  font-size: 20px;
+  margin-bottom: 30px;
 }
 </style>

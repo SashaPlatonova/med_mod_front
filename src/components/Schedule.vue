@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <vue-cal selected-date="2022-02-02"
+    <vue-cal
          :time-from="8 * 60"
          :time-to="24 * 60"
           locale="ru"
@@ -53,6 +53,7 @@ import 'vue-cal/dist/vuecal.css'
 import Modal from './UI/Modal'
 import CustomButton from './UI/Button'
 import axios from 'axios'
+import dateFormater from '../services/dateFormater'
 
 export default {
   name: 'Schedule',
@@ -65,7 +66,8 @@ export default {
     selectedEvent: {},
     showDialog: false,
     sessions: [],
-    events: []
+    events: [],
+    selectedDate: ''
   }),
   methods: {
     onEventClick (event, e) {
@@ -148,6 +150,9 @@ export default {
     }
   },
   created () {
+    this.selectedDate = new Date().toDateString()
+    this.selectedDate = dateFormater(this.selectedDate, false)
+    console.log(this.selectedDate)
     this.fetchSessions()
   }
 }

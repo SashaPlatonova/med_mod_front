@@ -39,7 +39,7 @@
         </div>
         <div class="buttons__row">
         <custom-button @click="showStan=false">Скрыть</custom-button>
-        <custom-button @click="isFull= !isFull">Показать все</custom-button>
+        <custom-button @click="isFull= !isFull">{{buttonText[Number(isFull)]}}</custom-button>
         </div>
       </slot>
     </standart>
@@ -74,6 +74,7 @@ export default {
       diagnosis: [],
       diagCode: '',
       d: null,
+      buttonText: ['Показать все', 'Только лечение'],
       fullDoc: '',
       treatment: '',
       isFull: false,
@@ -169,6 +170,9 @@ export default {
       }
     },
     async updateSession () {
+      if (this.d == null) {
+        await this.getDiagnosis()
+      }
       try {
         const response = await axios.put('http://localhost:8080/api/document/update',
           {
@@ -178,7 +182,7 @@ export default {
             category: this.session.category,
             patient: this.session.patient,
             diagnosis: this.d,
-            conclusion: this.session.conclusion
+            conclusion: this.session.category.structure
           },
           {
             headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() }
