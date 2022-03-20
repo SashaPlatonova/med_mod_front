@@ -15,6 +15,14 @@
         <input type="text" placeholder="UserName" v-model="employee.username"/>
         <div class="input-icon"><i class="fa fa-envelope"></i></div>
       </div>
+      <div class="input-group input-group-icon">
+        <input type="password" placeholder="Пароль" v-model="oldPass"/>
+        <div class="input-icon"><i class="fa fa-envelope"></i></div>
+      </div>
+      <div class="input-group input-group-icon">
+        <input type="password" placeholder="Новый пароль" v-model="pass"/>
+        <div class="input-icon"><i class="fa fa-envelope"></i></div>
+      </div>
     </div>
     <div class="row">
       <div class="input-group input-group-icon">
@@ -72,13 +80,37 @@ export default {
         photo: this.empl.photo,
         roleId: this.empl.roleId
       },
-      agree: false
+      oldPass: '',
+      pass: '',
+      agree: false,
+      updateReq: {
+        employee: null,
+        signInRequest: null
+      },
+      username: ''
     }
   },
   methods: {
     updateEmpl () {
       if (this.agree) {
-        this.$emit('update-empl', this.employee)
+        this.updateReq.signInRequest = {
+          username: this.username,
+          password: this.oldPass
+        }
+        this.employee.password = this.pass
+        this.updateReq.employee = this.employee
+        this.$emit('update-empl', this.updateReq)
+      }
+    }
+  },
+  created () {
+    if (localStorage.getItem('user')) {
+      try {
+        var currentUser = JSON.parse(localStorage.getItem('user'))
+        this.username = currentUser.username
+      } catch (e) {
+        console.log(e)
+        console.log('****')
       }
     }
   }

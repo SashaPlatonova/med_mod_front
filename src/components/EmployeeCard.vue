@@ -74,40 +74,27 @@ export default {
   data () {
     return {
       showModal: false,
-      myId: 0
+      myId: 0,
+      username: ''
     }
   },
   methods: {
-    async updateEmployee (employee) {
+    async updateEmployee (updateReq) {
       try {
-        const response = await axios.put('http://localhost:8080/api/employee/update',
+        const response = await axios.put('http://localhost:8080/api/auth/update',
           {
-            id: this.employee.id,
-            personnelNum: this.employee.personnelNum,
-            name: this.employee.name,
-            surName: this.employee.surName,
-            patronymic: this.employee.patronymic,
-            gender: this.employee.gender,
-            email: employee.email,
-            phoneNumber: employee.phoneNumber,
-            birthDate: this.employee.birthDate,
-            username: this.employee.username,
-            password: this.employee.password,
-            experience: employee.experience,
-            department: this.employee.department,
-            qualification: this.employee.qualification,
-            education: employee.education,
-            photo: this.employee.photo,
-            roleId: this.employee.roleId
+            empl: updateReq.employee,
+            signInRequest: updateReq.signInRequest
           },
           {
             headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() }
           }
         )
-        console.log(response)
+        console.log(response.data)
         this.showModal = false
       } catch (e) {
         console.log(e)
+        console.log('*****')
       }
     }
   },
@@ -121,6 +108,7 @@ export default {
       try {
         var currentUser = JSON.parse(localStorage.getItem('user'))
         this.myId = currentUser.id
+        this.username = currentUser.username
       } catch (e) {
         console.log(e)
         console.log('****')

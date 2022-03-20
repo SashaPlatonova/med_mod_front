@@ -131,6 +131,7 @@ export default {
           this.$router.push('/employee/' + response.data.id)
         }
       } catch (e) {
+        this.message = 'Неверно введен логин или пароль'
         console.log(e)
         console.log('****')
       }
