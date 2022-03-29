@@ -58,7 +58,7 @@
 import CustomButton from './UI/Button'
 import Modal from './UI/Modal'
 import Form from './UI/Form'
-import axios from 'axios'
+// import axios from 'axios'
 export default {
   name: 'EmployeeCard',
   components: {
@@ -80,22 +80,35 @@ export default {
   },
   methods: {
     async updateEmployee (updateReq) {
-      try {
-        const response = await axios.put('http://localhost:8080/api/auth/update',
-          {
-            empl: updateReq.employee,
-            signInRequest: updateReq.signInRequest
-          },
-          {
-            headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() }
-          }
-        )
-        console.log(response.data)
-        this.showModal = false
-      } catch (e) {
-        console.log(e)
-        console.log('*****')
-      }
+      // try {
+      //   axios.defaults.timeout = 600000
+      //   const response = await axios.patch('http://localhost:8080/api/auth/update',
+      //     {
+      //       empl: updateReq.employee,
+      //       signInRequest: updateReq.signInRequest
+      //     },
+      //     {
+      //       headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() },
+      //       timeout: 500000
+      //     }
+      //   )
+      //   console.log('********')
+      //   console.log(response.status)
+      //   if (response.data.token) {
+      //     var u = response.data
+      //     u.roles[0] = response.data.roles[0]
+      //     localStorage.setItem('user', JSON.stringify(u))
+      //     this.$cookies.set('token', response.data.token, 60 * 60 * 24 * 30)
+      //     this.$cookies.set('role', response.data.roles[0])
+      //     window.$cookies.set('token', response.data.token, 60 * 60 * 24 * 30)
+      //   }
+      //   console.log(response.data)
+      //   this.showModal = false
+      // } catch (e) {
+      //   console.log(e)
+      //   console.log('Ошибно обновления данных')
+      // }
+      this.$emit('update-empl', updateReq)
     }
   },
   computed: {
@@ -111,7 +124,6 @@ export default {
         this.username = currentUser.username
       } catch (e) {
         console.log(e)
-        console.log('****')
       }
     }
   }
@@ -158,6 +170,7 @@ export default {
   display: flex;
   justify-content: flex-end;
   flex-direction: column;
+  margin-bottom: 30px;
 }
 .single__button{
   display: flex;

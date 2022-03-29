@@ -18,6 +18,7 @@
     <div id="nav-content" tabindex="0">
       <ul class="navUl">
         <li class="navLi"><a href="#" @click="toProfile">Аккаунт</a></li>
+        <li class="navLi"><a href="#" @click="$router.push('/employee/list')">Сотрудники</a></li>
         <li class="navLi"><a href="#" @click="$router.push('/login')">Выход</a></li>
       </ul>
     </div>

@@ -16,12 +16,15 @@
         <div class="input-icon"><i class="fa fa-envelope"></i></div>
       </div>
       <div class="input-group input-group-icon">
-        <input type="password" placeholder="Пароль" v-model="oldPass"/>
+        <input type="password" placeholder="Текущий пароль" v-model="oldPass"/>
         <div class="input-icon"><i class="fa fa-envelope"></i></div>
       </div>
       <div class="input-group input-group-icon">
-        <input type="password" placeholder="Новый пароль" v-model="pass"/>
-        <div class="input-icon"><i class="fa fa-envelope"></i></div>
+        <div class="input-group input-group-icon" v-if="!changePass">
+        <custom-button @click="changePass=true">Изменить пароль</custom-button>
+        </div>
+        <input type="password" placeholder="Новый пароль" v-model="pass" v-else/>
+        <div class="input-icon"><i class="fa fa-envelope" @click="changePass=false"></i></div>
       </div>
     </div>
     <div class="row">
@@ -42,7 +45,7 @@
       </div>
     </div>
     <div class="row buttons__row">
-      <custom-button @click="!showModal">Отменить</custom-button>
+      <custom-button @click="showModal=false">Отменить</custom-button>
       <custom-button @click="updateEmpl">Изменить</custom-button>
     </div>
   </form>
@@ -72,13 +75,12 @@ export default {
         phoneNumber: this.empl.phoneNumber,
         birthDate: this.empl.birthDate,
         username: this.empl.username,
-        password: this.empl.password,
+        password: '',
         experience: this.empl.experience,
         department: this.empl.department,
         qualification: this.empl.qualification,
         education: this.empl.education,
-        photo: this.empl.photo,
-        roleId: this.empl.roleId
+        photo: this.empl.photo
       },
       oldPass: '',
       pass: '',
@@ -87,7 +89,8 @@ export default {
         employee: null,
         signInRequest: null
       },
-      username: ''
+      username: '',
+      changePass: false
     }
   },
   methods: {
@@ -97,7 +100,9 @@ export default {
           username: this.username,
           password: this.oldPass
         }
-        this.employee.password = this.pass
+        if (this.pass.length !== 0) {
+          this.employee.password = this.pass
+        }
         this.updateReq.employee = this.employee
         this.$emit('update-empl', this.updateReq)
       }

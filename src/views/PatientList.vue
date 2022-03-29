@@ -17,6 +17,7 @@
 import PatientCard from '../components/PatientCard'
 import axios from 'axios'
 import CustomButton from '../components/UI/Button'
+import dateFormater from '../services/dateFormater'
 
 export default {
   name: 'PatientList',
@@ -42,6 +43,9 @@ export default {
           }
         )
         this.schedules = response.data
+        for (const schedule of this.schedules) {
+          schedule.date = dateFormater(schedule.date, true)
+        }
         this.currentList = this.schedules
       } catch (e) {
         console.log(e)

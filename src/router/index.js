@@ -3,12 +3,12 @@ import Employee from '../views/Employee'
 import PatientList from '../views/PatientList'
 import Emc from '../views/Emc'
 import Profile from '../components/Profile'
-// import Login from '../components/Login'
 import Schedule from '../components/Schedule'
 import Enter from '../views/Enter'
 import AppointmentForm from '../components/AppointmentForm'
 import Report from '../views/Report'
 import LineChartCust from '../components/LineChartCust'
+import EmployeeList from '../views/EmployeeList'
 
 const routes = [
   {
@@ -50,6 +50,10 @@ const routes = [
   {
     path: '/test',
     component: LineChartCust
+  },
+  {
+    path: '/employee/list',
+    component: EmployeeList
   }
 ]
 
