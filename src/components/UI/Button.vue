@@ -15,6 +15,7 @@ export default {
 .btn{
   padding: 15px;
   margin-top: 10px;
+  height: 60px;
   margin-left: 30px;
   margin-right: 10px;
   min-width: 120px;

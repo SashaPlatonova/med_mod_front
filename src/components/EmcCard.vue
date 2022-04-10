@@ -98,7 +98,7 @@ export default {
   margin-top: 30px;
   /*display: flex;*/
   margin-bottom: 60px;
-  max-height: min-content;
+  max-height: 1000px;
 }
 
 .avatar__img{

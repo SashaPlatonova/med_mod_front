@@ -47,6 +47,7 @@
     <p class="message">{{message}}</p>
     </div>
     <div class="row buttons__row">
+      <custom-button @click="$router.back()">Назад</custom-button>
       <custom-button @click="resetForm">Сбросить</custom-button>
       <custom-button @click="addSession">Записать</custom-button>
     </div>
@@ -172,6 +173,8 @@ export default {
           )
           this.schedule = response.data
           this.schedule.date = dateFormater(this.schedule.date, true)
+          this.employee = this.schedule.employee
+          this.department = this.employee.department
         } catch (e) {
           console.log(e)
         }

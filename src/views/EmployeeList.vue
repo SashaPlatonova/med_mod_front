@@ -103,9 +103,9 @@ export default {
   background: white;
   border-radius: 15px;
   margin-left: 54px;
-  max-height: min-content;
   margin-top: 30px;
   margin-bottom: 60px;
+  max-height: 1500px;
 }
 .filters_list li {
   display: flex;

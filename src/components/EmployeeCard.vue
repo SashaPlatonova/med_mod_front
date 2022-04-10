@@ -1,6 +1,8 @@
 <template>
   <div class="card main__card">
-    <img :src="require('../assets/avatar.png')" alt="avatar" class="avatar__img">
+    <img v-if="employee.photo==null"
+         :src="require('../assets/avatar.png')" alt="avatar" class="avatar__img">
+    <img v-else :src="require('../assets/img/' + employee.photo)" alt="avatar" class="avatar__img">
     <div class="card__title">
       <p class="card__title__main">{{ employee.surName}} {{employee.name}} {{employee.patronymic}}</p>
       <p class="card__title__second">{{ employee.qualification }}</p>
@@ -80,34 +82,6 @@ export default {
   },
   methods: {
     async updateEmployee (updateReq) {
-      // try {
-      //   axios.defaults.timeout = 600000
-      //   const response = await axios.patch('http://localhost:8080/api/auth/update',
-      //     {
-      //       empl: updateReq.employee,
-      //       signInRequest: updateReq.signInRequest
-      //     },
-      //     {
-      //       headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() },
-      //       timeout: 500000
-      //     }
-      //   )
-      //   console.log('********')
-      //   console.log(response.status)
-      //   if (response.data.token) {
-      //     var u = response.data
-      //     u.roles[0] = response.data.roles[0]
-      //     localStorage.setItem('user', JSON.stringify(u))
-      //     this.$cookies.set('token', response.data.token, 60 * 60 * 24 * 30)
-      //     this.$cookies.set('role', response.data.roles[0])
-      //     window.$cookies.set('token', response.data.token, 60 * 60 * 24 * 30)
-      //   }
-      //   console.log(response.data)
-      //   this.showModal = false
-      // } catch (e) {
-      //   console.log(e)
-      //   console.log('Ошибно обновления данных')
-      // }
       this.$emit('update-empl', updateReq)
     }
   },
@@ -163,8 +137,8 @@ export default {
 }
 
 .avatar__img{
-  max-height: 216px;
-  max-width: 216px;
+  max-height: 230px;
+  max-width: 230px;
 }
 .button__card{
   display: flex;

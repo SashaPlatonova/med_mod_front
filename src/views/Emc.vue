@@ -4,7 +4,7 @@
       <input type="text" v-model="search" placeholder="Введите название:"/>
   </div>
 <div class="cards">
-  <EmcCard :document="document" @showFutures="changeFuture"></EmcCard>
+  <EmcCard :document="document" @show-futures="changeFuture"></EmcCard>
   <div class="doc_cards">
   <DocCard v-for="doc in searchDoc"
            :document="doc"

@@ -1,6 +1,8 @@
 <template>
 <div class="card">
-    <img :src="require('../assets/avatar.png')" alt="avatar" class="avatar__img">
+    <img v-if="employee.photo==null"
+         :src="require('../assets/avatar.png')" alt="avatar" class="avatar__img">
+    <img v-else :src="require('../assets/img/' + employee.photo)" alt="avatar" class="avatar__img">
     <div class="card__title">
       <p class="card__title__main" @click="show= !show">{{ employee.surName}} {{employee.name}} {{employee.patronymic}}</p>
       <p class="card__title__second">Отделение: {{employee.department.name}}</p>
@@ -56,8 +58,8 @@ export default {
 }
 
 .avatar__img{
-  max-height: 216px;
-  max-width: 216px;
+  max-height: 222px;
+  max-width: 222px;
 }
 .button__card{
   display: flex;

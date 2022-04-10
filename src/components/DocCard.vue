@@ -62,9 +62,10 @@ export default {
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].textContent.includes('нет')) {
           var children = arr[i].children
-          for (let j = 0; j < children.length; j++) {
-            children[j].style.background = '#FFA2A2'
-          }
+          children[1].style.background = '#FFA2A2'
+          // for (let j = 0; j < children.length; j++) {
+          //   children[j].style.background = '#FFA2A2'
+          // }
         }
       }
     },
@@ -79,6 +80,7 @@ export default {
             }
           }
         )
+        this.indicators = []
         for (const indicator of response.data) {
           indicator.date = dateFormater(indicator.date, false)
           this.indicators.push(indicator)
