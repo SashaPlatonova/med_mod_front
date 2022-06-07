@@ -1,24 +1,8 @@
-# med_mod_front
+# Frontend проекта для "КДЦ с поликлиникой"
 
-## Project setup
-```
-npm install
-```
 
-### Compiles and hot-reloads for development
+
+## запуск
 ```
 npm run serve
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
