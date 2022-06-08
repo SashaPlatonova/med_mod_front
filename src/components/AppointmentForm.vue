@@ -4,9 +4,12 @@
       <h4>Запись пациента на прием </h4>
       <div class="input-group input-group-icon">
         <label class="label">Пациент</label>
-        <select v-model="patient">
-          <option v-for="pat in patients" v-bind:key="pat.id" :value="pat">{{pat.surName }} {{pat.name}}</option>
-        </select>
+        <input id="patinput" type="text" placeholder="Выберете пациента"
+               v-model="patient" v-on:change="setCurrentPat(patient)" list="patients"/>
+      <datalist id="patients">
+          <option v-for="pat in optionPatient" v-bind:key="pat"
+                  :value="pat.surName + ' ' + pat.name + ' ' + pat.patronymic" >{{pat.name}} {{pat.surName}}</option>
+        </datalist>
       </div>
       <div class="input-group input-group-icon">
         <label class="label">Отделение</label>
@@ -69,7 +72,7 @@ export default {
       departments: [],
       category: {},
       categories: [],
-      patient: {},
+      patient: '',
       patients: [],
       date: {},
       schedule: {},
@@ -78,7 +81,9 @@ export default {
       offices: [],
       message: '',
       fromPath: '',
-      sessionId: null
+      sessionId: null,
+      surname: '',
+      curPat: {}
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -89,7 +94,7 @@ export default {
   methods: {
     resetForm () {
       this.employee = {}
-      this.patient = {}
+      this.patient = ''
       this.category = {}
       this.department = {}
       this.message = {}
@@ -102,6 +107,19 @@ export default {
     initOffices () {
       for (let i = 100; i < 400; i++) {
         this.offices[i - 100] = i.toString()
+      }
+    },
+    setCurrentPat (name) {
+      console.log('in setCurPat')
+      console.log(name)
+      this.patient = name
+      this.curPat = this.patients.filter(pat => pat.surName + ' ' + pat.name + ' ' + pat.patronymic === name)[0]
+      console.log(this.curPat.id)
+      if (this.curPat.id != null) {
+        console.log('parsing json')
+        const parsed = JSON.stringify(this.curPat)
+        localStorage.setItem('curPatient', parsed)
+        localStorage.setItem('patient', this.patient)
       }
     },
     async initBoxes () {
@@ -156,7 +174,18 @@ export default {
               }
             }
           )
-          this.patient = response.data
+          this.curPat = response.data
+          console.log(this.curPat.id)
+          const pars = JSON.stringify(this.curPat)
+          localStorage.setItem('curPatient', pars)
+          console.log('<><><><><><><><>')
+          this.patient = this.curPat.surName + ' ' + this.curPat.name + ' ' + this.curPat.patronymic
+          localStorage.patient = this.patient
+          localStorage.removeItem('department')
+          localStorage.removeItem('category')
+          localStorage.removeItem('employee')
+          localStorage.removeItem('office')
+          localStorage.removeItem('sessionName')
         } catch (e) {
           console.log(e)
         }
@@ -189,7 +218,7 @@ export default {
             office: this.office,
             category: this.category,
             diagnosis: null,
-            patient: this.patient,
+            patient: this.curPat,
             conclusion: this.category.conclusion
           },
           {
@@ -218,11 +247,12 @@ export default {
           }
         )
         this.message = 'Пациент успешно записан'
-        localStorage.removeItem('patient')
+        localStorage.removeItem('curPatient')
         localStorage.removeItem('department')
         localStorage.removeItem('category')
         localStorage.removeItem('employee')
         localStorage.removeItem('office')
+        localStorage.removeItem('patient')
         localStorage.removeItem('sessionName')
         console.log(response.status)
       } catch (e) {
@@ -236,20 +266,34 @@ export default {
     },
     optionsOffice () {
       return this.offices.filter(o => o.includes(this.office))
+    },
+    optionPatient () {
+      return this.patients.filter(p => p.surName.includes(document.getElementById('patinput').textContent))
     }
   },
   watch: {
     employee (newEmpl) {
       const parsed = JSON.stringify(newEmpl)
       localStorage.setItem('employee', parsed)
+      localStorage.office = 210
+      if (newEmpl.id === 34) {
+        this.office = 210
+      }
     },
+    // patient (newPat) {
+    //   if (newPat.length > 5) {
+    //     console.log('new pat')
+    //     this.curPat = this.patients.filter(pat => pat.surName + ' ' + pat.name + ' ' + pat.patronymic === newPat)[0]
+    //     localStorage.patient = newPat
+    //   }
+    // },
+    // curPatient (newCur) {
+    //   const parsed = JSON.stringify(newCur)
+    //   localStorage.setItem('curPatient', parsed)
+    // },
     category (newCat) {
       const parsed = JSON.stringify(newCat)
       localStorage.setItem('category', parsed)
-    },
-    patient (newPat) {
-      const parsed = JSON.stringify(newPat)
-      localStorage.setItem('patient', parsed)
     },
     office (newOffice) {
       localStorage.office = newOffice
@@ -265,9 +309,16 @@ export default {
       localStorage.sessionName = newName
     }
   },
-  mounted () {
+  async mounted () {
     this.initOffices()
     this.initBoxes()
+    if (localStorage.getItem('patient')) {
+      await this.initBoxes()
+      this.patient = localStorage.patient
+      this.curPat = this.patients.filter(pat => pat.surName + ' ' + pat.name + ' ' + pat.patronymic === this.patient)[0]
+      const pars = JSON.stringify(this.curPat)
+      localStorage.setItem('curPatient', pars)
+    }
     if (localStorage.getItem('employee')) {
       try {
         this.employee = JSON.parse(localStorage.getItem('employee'))
@@ -275,11 +326,18 @@ export default {
         console.log(e)
       }
     }
-    if (localStorage.patient) {
-      try {
-        this.patient = JSON.parse(localStorage.getItem('patient'))
-      } catch (e) {
-        console.log(e)
+    if (localStorage.getItem('curPatient') !== 'undefined') {
+      if (localStorage.getItem('curPatient')) {
+        try {
+          await this.initBoxes()
+          console.log('mounted')
+          console.log(JSON.parse(localStorage.getItem('curPatient')))
+          console.log('***')
+          this.curPat = JSON.parse(localStorage.getItem('curPatient'))
+          this.patient = this.curPat.surName + ' ' + this.curPat.name + ' ' + this.curPat.patronymic
+        } catch (e) {
+          console.log(e)
+        }
       }
     }
     if (localStorage.category) {

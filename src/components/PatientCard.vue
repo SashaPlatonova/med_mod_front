@@ -5,7 +5,7 @@
       <p class="card__title__main" @click="show= !show">{{ schedule.session.patient.surName}} {{schedule.session.patient.name}} {{schedule.session.patient.patronymic}}</p>
       <div v-show="show">
         <p class="card__title__second" v-if="schedule.session!=null">Дата последнего посещения: {{ schedule.date }}</p>
-        <p v-else class="card__title__second">Этоо пациент еще не был у Вас на приеме</p>
+        <p v-else class="card__title__second">Этот пациент еще не был у Вас на приеме</p>
         <p class="card__title__second" v-if="schedule.session.diagnosis!=null">Последний диагноз: {{schedule.session.diagnosis.name}}</p>
         <p v-else class="card__title__second">Нет диагнозов</p>
       </div>

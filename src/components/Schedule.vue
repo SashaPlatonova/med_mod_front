@@ -1,5 +1,19 @@
 <template>
   <div class="container">
+    <div class="employee">
+      <div class="empl_row">
+        <label class="label">Отделение</label>
+        <select v-model="department">
+          <option v-for="dep in departments" v-bind:key="dep.id" :value="dep">{{dep.name}}</option>
+        </select>
+      </div>
+      <div class="empl_row">
+        <label class="label">Сотрудник</label>
+        <select v-model="employee">
+          <option v-for="empl in initEmployees" v-bind:key="empl.id" :value="empl">{{empl.surName }} {{empl.name}}</option>
+        </select>
+      </div>
+    </div>
     <vue-cal
          :time-from="8 * 60"
          :time-to="24 * 60"
@@ -37,9 +51,9 @@
     </template>
   <template v-slot:footer>
     <custom-button @click="showDialog=false">Закрыть</custom-button>
-    <custom-button v-if="selectedEvent.title==='Свободно'"
+    <custom-button v-if="selectedEvent.title==='Свободно' && ableApp"
                    @click="$router.push('/appointment/'+selectedEvent.scheduleId)">Записать</custom-button>
-    <custom-button v-else @click="$router.push('/report/'+selectedEvent.id)">Провести прием</custom-button>
+    <custom-button v-if="able" @click="$router.push('/report/'+selectedEvent.id)">Провести прием</custom-button>
   </template>
 </modal>
   </div>
@@ -67,13 +81,71 @@ export default {
     showDialog: false,
     sessions: [],
     events: [],
-    selectedDate: ''
+    selectedDate: '',
+    able: false,
+    employee: {},
+    employees: [],
+    department: {},
+    departments: [],
+    ableApp: false
   }),
   methods: {
     onEventClick (event, e) {
       this.selectedEvent = event
       this.showDialog = true
+      this.checkDate()
+      this.checkFutureDate()
       e.stopPropagation()
+    },
+    checkFutureDate () {
+      var eventsDate = dateFormater(this.selectedEvent.start, false)
+      var current = dateFormater(new Date(), false)
+      this.ableApp = eventsDate >= current
+    },
+    checkDate () {
+      var eventsDate = dateFormater(this.selectedEvent.start, false)
+      var current = dateFormater(new Date(), false)
+      console.log(eventsDate)
+      console.log(current)
+      const parsed = JSON.parse(localStorage.getItem('user'))
+      var id = parsed.id
+      console.log('()()()()()()(')
+      console.log(eventsDate === current)
+      if (id !== Number(this.$route.params.id)) {
+        this.able = false
+        console.log('fa')
+      } else {
+        this.able = eventsDate === current
+      }
+    },
+    async initBoxes () {
+      try {
+        const response = await axios.get('http://localhost:8080/api/department/find/all',
+          {
+            headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() }
+          }
+        )
+        this.departments = response.data
+      } catch (e) {
+        console.log(e)
+      }
+      try {
+        const response = await axios.get('http://localhost:8080/api/employee/find/all',
+          {
+            headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() }
+          }
+        )
+        console.log(this.$route.params.id)
+        this.employees = response.data
+        var res = this.employees.filter(e => e.id === Number(this.$route.params.id))
+        console.log(res[0])
+        this.employee = res[0]
+        console.log(this.employee.id)
+        this.department = this.departments.filter(d => d.id === this.employee.department.id)[0]
+        console.log(this.employee.id)
+      } catch (e) {
+        console.log(e)
+      }
     },
     async fetchSessions () {
       try {
@@ -86,6 +158,8 @@ export default {
           }
         )
         this.sessions = response.data
+        this.employee = this.sessions[0].employee
+        this.department = this.employee.department
         for (let i = 0; i < this.sessions.length; i++) {
           var date = new Date(this.sessions[i].date)
           var month = date.getMonth() + 1
@@ -108,14 +182,19 @@ export default {
           var scheduleId = this.sessions[i].id
           if (this.sessions[i].session != null) {
             title = this.sessions[i].session.sessionName
-            patient = this.sessions[i].session.patient.surName + ' ' + this.sessions[i].session.patient.name
-            content = 'Пациент: ' + patient + '<br>' + 'Дата рождения:' +
-              this.sessions[i].session.patient.birthDate + '<br>' + '<strong>Контакты</strong>' + '<br>' +
-              this.sessions[i].session.patient.phoneNumber +
-              ' ' + this.sessions[i].session.patient.email + '<br>' +
-              'Кабинет: ' + this.sessions[i].session.office
+            if (this.sessions[i].session.patient != null) {
+              patient = this.sessions[i].session.patient.surName + ' ' + this.sessions[i].session.patient.name
+              content = 'Пациент: ' + patient + '<br>' + 'Дата рождения:' +
+                this.sessions[i].session.patient.birthDate + '<br>' + '<strong>Контакты</strong>' + '<br>' +
+                this.sessions[i].session.patient.phoneNumber +
+                ' ' + this.sessions[i].session.patient.email + '<br>' +
+                'Кабинет: ' + this.sessions[i].session.office
+            } else {
+              content = 'Кабинет: ' + this.sessions[i].session.office
+            }
             id = this.sessions[i].session.id
           }
+          console.log('before push')
           this.events.push({
             start: startDate,
             end: endDate,
@@ -149,10 +228,25 @@ export default {
       }
     }
   },
+  computed: {
+    initEmployees () {
+      return this.employees.filter(e => e.department.id === this.department.id)
+    }
+  },
+  watch: {
+    employee (newEmpl) {
+      this.$router.push('/schedule/' + newEmpl.id)
+      if (this.employee.id !== newEmpl.id) {
+        this.$router.go()
+        this.employee = newEmpl
+      }
+    }
+  },
   created () {
     this.selectedDate = new Date().toDateString()
     this.selectedDate = dateFormater(this.selectedDate, false)
     console.log(this.selectedDate)
+    this.initBoxes()
     this.fetchSessions()
   }
 }
@@ -239,5 +333,26 @@ export default {
   webkit-box-flex: 1!important;
   -ms-flex-positive: 1!important;
   flex-grow: 1!important;
+}
+
+.employee{
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+}
+
+.empl_row{
+  margin-left: 10px;
+  font-size: 18px;
+}
+select{
+  border-radius: 10px;
+  font-size: 18px;
+}
+select:focus,
+select:active {
+  background-color: #758A99;
+  color: #fff;
+  border-color: #758A99;
 }
 </style>

@@ -59,8 +59,7 @@ export default {
     my (newMy) {
       if (newMy) {
         this.currentList = this.schedules.filter(s => s.employee.id === Number(this.$route.params.id))
-        console.log(this.schedules[0].employee.id === Number(this.$route.params.id))
-        console.log(this.schedules[0].employee.id === 3)
+        console.log(Number(this.$route.params.id))
         this.buttonName = 'Все'
       } else {
         this.buttonName = 'Мои пациенты'

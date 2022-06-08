@@ -10,7 +10,7 @@
     </div>
     <div class="button__card">
       <custom-button @click="$router.push('/patientList/' + employee.id)">Пациенты</custom-button>
-      <custom-button @click="$router.push('/schedule/' + employee.id)">Расписание</custom-button>
+      <custom-button @click="toSchedule()">Расписание</custom-button>
     </div>
   </div>
   <div class="card single__button">
@@ -83,6 +83,11 @@ export default {
   methods: {
     async updateEmployee (updateReq) {
       this.$emit('update-empl', updateReq)
+    },
+    toSchedule () {
+      localStorage.removeItem('curPatient')
+      localStorage.removeItem('patient')
+      this.$router.push('/schedule/' + this.employee.id)
     }
   },
   computed: {

@@ -78,7 +78,8 @@ export default {
       fullDoc: '',
       treatment: '',
       isFull: false,
-      access: false
+      access: false,
+      files: ''
     }
   },
   methods: {
@@ -98,6 +99,22 @@ export default {
           }
         } catch (e) {
           console.log(e)
+        }
+      }
+    },
+    handleFileUpload (e) {
+      console.log('in files')
+      this.files = this.$refs.files.files
+      var formData = new FormData()
+      for (var i = 0; i < this.files.length; i++) {
+        var file = this.files[i]
+        formData.append('files[' + i + ']', file)
+        var f = e.target.files[0]
+        var reader = new FileReader()
+        var that = this
+        reader.readAsDataURL(f)
+        reader.onload = function (e) {
+          that.avatar = this.result
         }
       }
     },

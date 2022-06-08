@@ -59,7 +59,14 @@ export default {
           }
           doc.date = dateFormater(doc.date, true)
           this.documents.push(doc)
-          this.currentDocsList.push(doc)
+          var j = 0
+          for (const doc of this.documents) {
+            if (new Date(doc.date) < new Date()) {
+              this.currentDocsList[j] = doc
+              j++
+            }
+          }
+          // this.currentDocsList.push(doc)
         }
       } catch (e) {
         console.log(e)
@@ -96,7 +103,13 @@ export default {
           }
         }
       } else {
-        this.currentDocsList = this.documents
+        var j = 0
+        for (const doc of this.documents) {
+          if (new Date(doc.date) < new Date()) {
+            this.currentDocsList[j] = doc
+            j++
+          }
+        }
       }
     }
   },
@@ -121,7 +134,7 @@ export default {
 .search-wrapper {
   position: unset;
   margin-left: 54px;
-  min-width: 70%;
+  max-width: 50%;
   height: 30px;
   margin-bottom: 54px;
 }
@@ -168,13 +181,14 @@ input:focus + label {
   margin-left: 10%;
   margin-top: 30px;
   position: unset;
+  max-width: max-content;
 }
 .filters_list {
   min-width: 300px;
   background: white;
   border-radius: 15px;
   margin-left: 54px;
-  max-height: min-content;
+  max-height: 800px;
   margin-top: 30px;
   margin-bottom: 60px;
 }

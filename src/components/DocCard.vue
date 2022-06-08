@@ -1,5 +1,5 @@
 <template>
-<div class="card" v-if="!showConc && !showIndicators">
+<div class="card" v-if="!showConc && !showIndicators && !openPhoto">
   <p class="card__title">{{document.session.sessionName}}</p>
   <p class="card__text">Врач: {{document.employee.surName}}</p>
   <p class="card__text">Дата приема: {{document.date}}</p>
@@ -16,17 +16,31 @@
     </thead>
     <tbody>
       <tr v-for="conc in document.session.conclusion" v-bind:key="conc">
-        <td v-for="(value, key) in conc" v-bind:key="key" class="valuesIndicator"
+        <template v-if="conc.Значение.includes('jpg')">
+          <td>Материалы</td>
+          <td><custom-button v-if="document.session.category.id === 7" style="height: 45px" @click="fetchMedia(document.session.id)">Открыть</custom-button></td>
+          </template>
+        <template v-else>
+          <td v-for="(value, key) in conc" v-bind:key="key" class="valuesIndicator"
             @click="this.fetchAnalysis(conc.Название); showIndicators=true; showConc=false">{{value}}</td>
+        </template>
       </tr>
     </tbody>
     </table>
+    <div class="buttons">
     <custom-button style="align-self: end" @click="this.showConc=false">Скрыть</custom-button>
+    </div>
   </div>
   <div v-else-if="showIndicators" class="conclusion">
     <change-table :indicators="indicators"></change-table>
     <line-chart-cust v-if="loaded" :ind="indicators"></line-chart-cust>
     <custom-button style="align-self: end" @click="this.showIndicators=false; showConc=true">Скрыть</custom-button>
+  </div>
+  <div v-if="openPhoto" class="conclusion">
+    <div v-for="l in links" v-bind:key="l">
+      <img :src="require('../assets/img/' + l)" alt="result" class="media">
+    </div>
+    <custom-button style="align-self: end" @click="this.openPhoto=false; showConc=true">Скрыть</custom-button>
   </div>
 </template>
 
@@ -53,7 +67,9 @@ export default {
       showConc: false,
       showIndicators: false,
       indicators: [],
-      loaded: false
+      loaded: false,
+      openPhoto: false,
+      links: []
     }
   },
   methods: {
@@ -91,6 +107,23 @@ export default {
       } catch (e) {
         console.log(e)
       }
+    },
+    async fetchMedia (id) {
+      try {
+        const response = await axios.get('http://localhost:8080/api/document/media',
+          {
+            headers: { Authorization: 'Bearer ' + this.$cookies.get('token').toString() },
+            params: {
+              id: id
+            }
+          }
+        )
+        this.links = response.data
+        this.showConc = false
+        this.openPhoto = true
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }
@@ -122,7 +155,7 @@ export default {
 .conclusion{
   display: flex;
   flex-direction: column;
-  min-width: 400px;
+  min-width: 700px;
   margin-bottom: 54px;
   padding: 50px;
   border-radius: 15px;
@@ -148,5 +181,15 @@ export default {
 .table td {
   border: 1px solid #dddddd;
   padding: 5px;
+}
+
+.buttons{
+  display: flex;
+  justify-content: flex-end;
+  margin-left: 30px;
+}
+
+.media {
+  margin-top: 20px;
 }
 </style>

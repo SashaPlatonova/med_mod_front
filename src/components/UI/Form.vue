@@ -19,8 +19,8 @@
         <input type="password" placeholder="Текущий пароль" v-model="oldPass"/>
         <div class="input-icon"><i class="fa fa-envelope"></i></div>
       </div>
-      <div class="input-group input-group-icon">
-        <div class="input-group input-group-icon" v-if="!changePass">
+      <div class="input-group">
+        <div  v-if="!changePass">
         <custom-button @click="changePass=true">Изменить пароль</custom-button>
         </div>
         <input type="password" placeholder="Новый пароль" v-model="pass" v-else/>
@@ -30,11 +30,9 @@
     <div class="row">
       <div class="input-group input-group-icon">
         <textarea placeholder="Образование" v-model="employee.education"/>
-        <div class="input-icon"><i class="fa fa-envelope"></i></div>
       </div>
       <div class="input-group input-group-icon">
         <textarea placeholder="Опыт работы" v-model="employee.experience"/>
-        <div class="input-icon"><i class="fa fa-envelope"></i></div>
       </div>
     </div>
     <div class="row">

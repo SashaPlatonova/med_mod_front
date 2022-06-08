@@ -19,6 +19,8 @@
       <ul class="navUl">
         <li class="navLi"><a href="#" @click="toProfile">Аккаунт</a></li>
         <li class="navLi"><a href="#" @click="$router.push('/employee/list')">Сотрудники</a></li>
+        <li class="navLi"><a href="#" @click="$router.push('/schedule/' + id)">Расписание</a></li>
+        <li class="navLi"><a href="#" @click="$router.push('/patientList/' + id)">Пациенты</a></li>
         <li class="navLi"><a href="#" @click="$router.push('/login')">Выход</a></li>
       </ul>
     </div>
@@ -46,6 +48,10 @@ export default {
         console.log('Ошибка обращения у хранилищу')
       }
     }
+  },
+  created () {
+    const parsed = JSON.parse(localStorage.getItem('user'))
+    this.id = parsed.id
   }
 }
 </script>
